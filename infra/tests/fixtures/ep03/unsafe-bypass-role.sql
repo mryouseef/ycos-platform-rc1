@@ -1,0 +1,1 @@
+CREATE ROLE unsafe_runtime NOLOGIN BYPASSRLS;

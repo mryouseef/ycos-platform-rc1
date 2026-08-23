@@ -1,0 +1,3 @@
+import { spawnSync } from "node:child_process";
+const cases=[[["--import","tsx","--test","tests/ep14-observability.test.ts"],"EP14_OBSERVABILITY"],[["--import","tsx","--test","tests/ep13-resilience.test.ts"],"EP13_RESILIENCE"],[["--import","tsx","--test","tests/ep12-security-regression.test.ts"],"EP03_TO_EP12_BOUNDARIES"],[['--test','infra/audit/ep06/tests/runtime-audit-security.test.mjs'],"EP06_AUDIT"]];
+for(const [args,label] of cases){const result=spawnSync("node",args,{cwd:process.cwd(),encoding:"utf8",env:{...process.env,NODE_ENV:"test",YCOS_E2E_HARNESS_ENABLED:"true"}});process.stdout.write(`--- ${label} ---\n${result.stdout}${result.stderr}`);if(result.status!==0)process.exit(result.status??1)}console.log("EP14_SECURITY_REGRESSION_PASS 4/4");

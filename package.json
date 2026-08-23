@@ -1,0 +1,38 @@
+{
+  "name": "ycos-public-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "m05:architecture": "node scripts/verify_m05_architecture.mjs .",
+    "dev": "next dev --hostname 0.0.0.0",
+    "build": "NODE_ENV=production next build",
+    "start": "next start --hostname 0.0.0.0",
+    "check": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "node --import tsx --test tests/*.test.ts tests/*.test.tsx",
+    "test:e2e": "playwright test",
+    "test:all": "pnpm run test && pnpm run test:e2e",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "next": "16.3.1",
+    "pg": "^8.23.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@babel/core": "7.29.7",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^24.7.0",
+    "@types/react": "^19.2.1",
+    "@types/react-dom": "^19.2.1",
+    "eslint": "9.39.1",
+    "eslint-config-next": "16.3.1",
+    "tsx": "^4.19.1",
+    "typescript": "6.0.3"
+  },
+  "packageManager": "pnpm@10.4.1"
+}

@@ -1,0 +1,1 @@
+import test from"node:test";import assert from"node:assert/strict";import{execFileSync}from"node:child_process";test("M06 project-path architecture scanner accepts the project and proves every isolated fixture",()=>{const out=execFileSync("node",["scripts/verify_m06_architecture.mjs","."],{cwd:process.cwd(),encoding:"utf8"});assert.match(out,/rules=17 fixtureProjects=17/)})

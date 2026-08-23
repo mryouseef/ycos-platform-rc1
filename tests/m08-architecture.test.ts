@@ -1,0 +1,1 @@
+import test from"node:test";import assert from"node:assert/strict";import{scanProject,fixtureProof}from"@/scripts/verify_m08_architecture.mjs";test("M08 project-path scanner and isolated fixture proof pass",()=>{assert.deepEqual(scanProject(process.cwd()),[]);assert.equal(fixtureProof(),8)});

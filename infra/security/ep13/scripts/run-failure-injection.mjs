@@ -1,0 +1,12 @@
+import { Circuit, ResilienceState, SyntheticQueue, boundedRetry, limits } from "../../../../src/ep13/resilience.ts";
+const scope = { actorId: "USER_A", clientId: "synthetic-client-a", action: "EXPORT", objectId: "object-a-01", correlationId: "fi-a", operationId: "fi-op", authorityVersion: 1 };
+const state = new ResilienceState(); const queue = new SyntheticQueue(); const circuit = new Circuit(); let passed = 0;
+const check = (name, value) => { if (!value) throw new Error(`EP13_FAILURE_FAIL ${name}`); passed += 1; console.log(`PASS ${name}`); };
+state.mandatory.audit = false; check("AUDIT_PRESSURE_FAIL_CLOSED", state.execute(scope).reason === "AUDIT_REQUIRED"); state.mandatory.audit = true;
+state.mandatory.secret = false; check("SECRET_FAILURE_NO_FALLBACK", state.execute(scope, "SECRET").outcome === "FAILED"); state.mandatory.secret = true;
+check("OBJECT_FAILURE_NO_PUBLIC_FALLBACK", state.execute(scope, "OBJECT").outcome === "FAILED"); check("DATABASE_PRESSURE_FAIL_SAFE", state.execute(scope, "DATABASE").outcome === "FAILED");
+const retry = await boundedRetry(scope, "TIMEOUT", async attempt => { if (attempt === 1) throw new Error("timeout"); return "recovered"; }); check("TIMEOUT_RETRY_BOUNDED", retry.outcome === "OK" && retry.attempts === limits.maxAttempts && retry.scope.clientId === scope.clientId);
+circuit.call(() => { throw new Error("dependency"); }); circuit.call(() => { throw new Error("dependency"); }); check("CIRCUIT_SAFE_OPEN", circuit.call(() => "fallback").state === "OPEN");
+for (let i = 0; i < limits.maxQueueDepth; i += 1) check(`QUEUE_FILL_${i}`, queue.enqueue(scope, `key-${i}`).ok); check("QUEUE_BACKPRESSURE", !queue.enqueue(scope, "overflow").ok);
+check("READINESS_MANDATORY_FAILURE", state.readiness()); state.mandatory.database = false; check("NOT_READY_MANDATORY_FAILURE", !state.readiness());
+console.log(`EP13_FAILURE_INJECTION_PASS ${passed}/13`);

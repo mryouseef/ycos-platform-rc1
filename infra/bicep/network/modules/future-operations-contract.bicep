@@ -1,0 +1,14 @@
+// EP-10 planning-only operations interface. This module declares no Azure resources.
+param operationsMode string
+param maintenanceAuthorityReference string
+param operationalIdentityReference string
+param alertingEligibilityReference string
+param incidentEscalationReference string
+param regionalCapabilityReference string
+
+output operationsModeOutput string = operationsMode
+output maintenanceAuthorityOutput string = maintenanceAuthorityReference
+output operationalIdentityOutput string = operationalIdentityReference
+output alertingEligibilityOutput string = alertingEligibilityReference
+output incidentEscalationOutput string = incidentEscalationReference
+output regionalCapabilityOutput string = regionalCapabilityReference

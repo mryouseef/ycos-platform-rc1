@@ -1,0 +1,1 @@
+const apiKey = 'SYNTHETIC_UNSAFE_API_KEY_LITERAL';

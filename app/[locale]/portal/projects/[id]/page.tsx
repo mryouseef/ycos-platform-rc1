@@ -1,0 +1,1 @@
+import type{Metadata}from"next";import{M06Page}from"@/src/m06/m06-page";export const metadata:Metadata={robots:{index:false,follow:false}};export default async function P({params}:{params:Promise<{locale:string;id:string}>}){const{locale,id}=await params;return <M06Page locale={locale} resource="PROJECTS" mode="project" id={id}/>}

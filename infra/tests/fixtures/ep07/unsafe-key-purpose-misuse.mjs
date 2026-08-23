@@ -1,0 +1,1 @@
+function encryptWithSigningKey() { return true; }

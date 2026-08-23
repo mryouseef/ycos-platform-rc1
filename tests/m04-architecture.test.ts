@@ -1,0 +1,4 @@
+import test from "node:test"; import assert from "node:assert/strict"; import { analyzeArchitecture, runNegativeFixtures } from "../scripts/verify_m04_absence.mjs";
+test("M04 Architecture 01: every active runtime file obeys dependency direction", () => assert.deepEqual(analyzeArchitecture().issues, []));
+test("M04 Architecture 02: each targeted negative fixture fails for its expected reason", () => assert.equal(runNegativeFixtures().every(result=>result.found),true));
+test("M04 Architecture 03: the verifier covers each documented operational root when present", () => { const files=analyzeArchitecture().runtimeFiles; assert.equal(files.some(file=>file.startsWith("src/application/")),true); assert.equal(files.some(file=>file.startsWith("app/")),true); assert.equal(files.some(file=>file.startsWith("components/")),true); });

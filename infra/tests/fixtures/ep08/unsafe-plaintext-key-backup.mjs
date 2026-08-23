@@ -1,0 +1,1 @@
+const privateKeyMaterial = 'unsafe-fixture';

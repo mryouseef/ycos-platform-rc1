@@ -1,0 +1,1 @@
+cache.set(id, value)

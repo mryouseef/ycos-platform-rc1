@@ -1,0 +1,1 @@
+var vault = { publicNetworkAccess: 'enabled' }

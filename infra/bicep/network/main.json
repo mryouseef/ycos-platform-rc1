@@ -1,0 +1,1902 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.46.1.21595",
+      "templateHash": "14285113292600553420"
+    }
+  },
+  "parameters": {
+    "environment": {
+      "type": "string",
+      "allowedValues": [
+        "controlled"
+      ]
+    },
+    "authorizedControlledEvaluationRegion": {
+      "type": "string",
+      "metadata": {
+        "description": "Authorized controlled-evaluation region, not a production-region assertion."
+      }
+    },
+    "regionCode": {
+      "type": "string",
+      "metadata": {
+        "description": "Operational region code used only in deterministic names and tags."
+      }
+    },
+    "addressSpace": {
+      "type": "string",
+      "metadata": {
+        "description": "Planning value only; reconciliation with enterprise IP allocation is required before apply."
+      }
+    },
+    "applicationSubnetPrefix": {
+      "type": "string"
+    },
+    "privateEndpointSubnetPrefix": {
+      "type": "string"
+    },
+    "databaseSubnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Planning-only delegated subnet for a future PostgreSQL private path; capability and region verification remain required."
+      }
+    },
+    "vnetName": {
+      "type": "string"
+    },
+    "applicationNsgName": {
+      "type": "string"
+    },
+    "databaseNsgName": {
+      "type": "string"
+    },
+    "storageAccountName": {
+      "type": "string"
+    },
+    "identityProviderMode": {
+      "type": "string"
+    },
+    "tenantAuthorityReference": {
+      "type": "string"
+    },
+    "issuerValidationReference": {
+      "type": "string"
+    },
+    "audienceValidationReference": {
+      "type": "string"
+    },
+    "redirectUriPolicyReference": {
+      "type": "string"
+    },
+    "observabilityMode": {
+      "type": "string"
+    },
+    "destinationEligibilityReference": {
+      "type": "string"
+    },
+    "retentionPolicyReference": {
+      "type": "string"
+    },
+    "residencyVerificationReference": {
+      "type": "string"
+    },
+    "alertingPolicyReference": {
+      "type": "string"
+    },
+    "keyVaultMode": {
+      "type": "string"
+    },
+    "keyVaultPrivateConnectivityReference": {
+      "type": "string"
+    },
+    "keyVaultDiagnosticsReference": {
+      "type": "string"
+    },
+    "keyVaultRegionalCapabilityReference": {
+      "type": "string"
+    },
+    "recoveryMode": {
+      "type": "string"
+    },
+    "backupIntegrityReference": {
+      "type": "string"
+    },
+    "restoreAuthorizationReference": {
+      "type": "string"
+    },
+    "retentionAndHoldReference": {
+      "type": "string"
+    },
+    "backupEncryptionKeyReference": {
+      "type": "string"
+    },
+    "recoveryRegionalCapabilityReference": {
+      "type": "string"
+    },
+    "cicdMode": {
+      "type": "string"
+    },
+    "pipelineIdentityReference": {
+      "type": "string"
+    },
+    "artifactIntegrityReference": {
+      "type": "string"
+    },
+    "releaseAuthorizationReference": {
+      "type": "string"
+    },
+    "cicdTargetRegionEligibilityReference": {
+      "type": "string"
+    },
+    "operationsMode": {
+      "type": "string"
+    },
+    "maintenanceAuthorityReference": {
+      "type": "string"
+    },
+    "operationalIdentityReference": {
+      "type": "string"
+    },
+    "alertingEligibilityReference": {
+      "type": "string"
+    },
+    "incidentEscalationReference": {
+      "type": "string"
+    },
+    "operationsRegionalCapabilityReference": {
+      "type": "string"
+    },
+    "privacyMode": {
+      "type": "string"
+    },
+    "classificationReference": {
+      "type": "string"
+    },
+    "lifecyclePolicyReference": {
+      "type": "string"
+    },
+    "holdAuthorityReference": {
+      "type": "string"
+    },
+    "exportAuthorizationReference": {
+      "type": "string"
+    },
+    "privacyAuditEvidenceReference": {
+      "type": "string"
+    },
+    "privacyProviderLifecycleEligibilityReference": {
+      "type": "string"
+    },
+    "applicationSecurityMode": {
+      "type": "string"
+    },
+    "ingressDefaultDeny": {
+      "type": "string"
+    },
+    "corsMode": {
+      "type": "string"
+    },
+    "securityHeadersRequirement": {
+      "type": "string"
+    },
+    "rateLimitPolicyReference": {
+      "type": "string"
+    },
+    "applicationSecurityDiagnosticEvidenceReference": {
+      "type": "string"
+    },
+    "wafCdnEligibilityReference": {
+      "type": "string"
+    },
+    "applicationSecurityRegionalCapabilityReference": {
+      "type": "string"
+    },
+    "resilienceMode": {
+      "type": "string"
+    },
+    "readinessRequirement": {
+      "type": "string"
+    },
+    "resourceBoundsRequirement": {
+      "type": "string"
+    },
+    "retryPolicyReference": {
+      "type": "string"
+    },
+    "queueConfigurationReference": {
+      "type": "string"
+    },
+    "resilienceDiagnosticsReference": {
+      "type": "string"
+    },
+    "autoscalingEligibilityReference": {
+      "type": "string"
+    },
+    "ownerRole": {
+      "type": "string"
+    },
+    "costCenter": {
+      "type": "string"
+    },
+    "residencyTarget": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "governanceTags": {
+      "project": "ycos",
+      "environment": "[parameters('environment')]",
+      "ownerRole": "[parameters('ownerRole')]",
+      "dataClass": "synthetic-non-sensitive",
+      "criticality": "controlled-network-foundation",
+      "costCenter": "[parameters('costCenter')]",
+      "managedBy": "iac-bicep",
+      "lifecycle": "controlled",
+      "residencyTarget": "[parameters('residencyTarget')]",
+      "regionCode": "[parameters('regionCode')]",
+      "publicDataPlaneDefault": "denied"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('{0}-module', parameters('applicationNsgName'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "nsgName": {
+            "value": "[parameters('applicationNsgName')]"
+          },
+          "location": {
+            "value": "[parameters('authorizedControlledEvaluationRegion')]"
+          },
+          "tags": {
+            "value": "[variables('governanceTags')]"
+          },
+          "applicationSubnetPrefix": {
+            "value": "[parameters('applicationSubnetPrefix')]"
+          },
+          "databaseSubnetPrefix": {
+            "value": "[parameters('databaseSubnetPrefix')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.46.1.21595",
+              "templateHash": "7697651780196221259"
+            }
+          },
+          "parameters": {
+            "nsgName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "object"
+            },
+            "applicationSubnetPrefix": {
+              "type": "string"
+            },
+            "databaseSubnetPrefix": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "apiVersion": "2024-05-01",
+              "name": "[parameters('nsgName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "securityRules": [
+                  {
+                    "name": "Allow-Application-To-Future-PostgreSQL-Private-Path",
+                    "properties": {
+                      "priority": 190,
+                      "access": "Allow",
+                      "direction": "Outbound",
+                      "destinationAddressPrefix": "[parameters('databaseSubnetPrefix')]",
+                      "destinationPortRange": "5432",
+                      "protocol": "Tcp",
+                      "sourceAddressPrefix": "[parameters('applicationSubnetPrefix')]",
+                      "sourcePortRange": "*"
+                    }
+                  },
+                  {
+                    "name": "Deny-Internet-Inbound-To-Application",
+                    "properties": {
+                      "priority": 200,
+                      "access": "Deny",
+                      "direction": "Inbound",
+                      "destinationAddressPrefix": "[parameters('applicationSubnetPrefix')]",
+                      "destinationPortRange": "*",
+                      "protocol": "*",
+                      "sourceAddressPrefix": "Internet",
+                      "sourcePortRange": "*"
+                    }
+                  },
+                  {
+                    "name": "Deny-Lateral-Inbound-To-Application",
+                    "properties": {
+                      "priority": 210,
+                      "access": "Deny",
+                      "direction": "Inbound",
+                      "destinationAddressPrefix": "[parameters('applicationSubnetPrefix')]",
+                      "destinationPortRange": "*",
+                      "protocol": "*",
+                      "sourceAddressPrefix": "VirtualNetwork",
+                      "sourcePortRange": "*"
+                    }
+                  },
+                  {
+                    "name": "Deny-Internet-Outbound-From-Application",
+                    "properties": {
+                      "priority": 220,
+                      "access": "Deny",
+                      "direction": "Outbound",
+                      "destinationAddressPrefix": "Internet",
+                      "destinationPortRange": "*",
+                      "protocol": "*",
+                      "sourceAddressPrefix": "[parameters('applicationSubnetPrefix')]",
+                      "sourcePortRange": "*"
+                    }
+                  },
+                  {
+                    "name": "Deny-Lateral-Outbound-From-Application",
+                    "properties": {
+                      "priority": 230,
+                      "access": "Deny",
+                      "direction": "Outbound",
+                      "destinationAddressPrefix": "VirtualNetwork",
+                      "destinationPortRange": "*",
+                      "protocol": "*",
+                      "sourceAddressPrefix": "[parameters('applicationSubnetPrefix')]",
+                      "sourcePortRange": "*"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "outputs": {
+            "resourceId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('{0}-module', parameters('databaseNsgName'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "nsgName": {
+            "value": "[parameters('databaseNsgName')]"
+          },
+          "location": {
+            "value": "[parameters('authorizedControlledEvaluationRegion')]"
+          },
+          "tags": {
+            "value": "[variables('governanceTags')]"
+          },
+          "applicationSubnetPrefix": {
+            "value": "[parameters('applicationSubnetPrefix')]"
+          },
+          "databaseSubnetPrefix": {
+            "value": "[parameters('databaseSubnetPrefix')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.46.1.21595",
+              "templateHash": "35288904660161611"
+            }
+          },
+          "parameters": {
+            "nsgName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "object"
+            },
+            "applicationSubnetPrefix": {
+              "type": "string"
+            },
+            "databaseSubnetPrefix": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "apiVersion": "2024-05-01",
+              "name": "[parameters('nsgName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "securityRules": [
+                  {
+                    "name": "Allow-Application-To-PostgreSQL-5432",
+                    "properties": {
+                      "priority": 190,
+                      "access": "Allow",
+                      "direction": "Inbound",
+                      "destinationAddressPrefix": "[parameters('databaseSubnetPrefix')]",
+                      "destinationPortRange": "5432",
+                      "protocol": "Tcp",
+                      "sourceAddressPrefix": "[parameters('applicationSubnetPrefix')]",
+                      "sourcePortRange": "*"
+                    }
+                  },
+                  {
+                    "name": "Deny-Internet-Inbound-To-PostgreSQL",
+                    "properties": {
+                      "priority": 200,
+                      "access": "Deny",
+                      "direction": "Inbound",
+                      "destinationAddressPrefix": "[parameters('databaseSubnetPrefix')]",
+                      "destinationPortRange": "*",
+                      "protocol": "*",
+                      "sourceAddressPrefix": "Internet",
+                      "sourcePortRange": "*"
+                    }
+                  },
+                  {
+                    "name": "Deny-Lateral-Inbound-To-PostgreSQL",
+                    "properties": {
+                      "priority": 210,
+                      "access": "Deny",
+                      "direction": "Inbound",
+                      "destinationAddressPrefix": "[parameters('databaseSubnetPrefix')]",
+                      "destinationPortRange": "*",
+                      "protocol": "*",
+                      "sourceAddressPrefix": "VirtualNetwork",
+                      "sourcePortRange": "*"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "outputs": {
+            "resourceId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('{0}-module', parameters('vnetName'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "vnetName": {
+            "value": "[parameters('vnetName')]"
+          },
+          "location": {
+            "value": "[parameters('authorizedControlledEvaluationRegion')]"
+          },
+          "tags": {
+            "value": "[variables('governanceTags')]"
+          },
+          "addressSpace": {
+            "value": "[parameters('addressSpace')]"
+          },
+          "applicationSubnetPrefix": {
+            "value": "[parameters('applicationSubnetPrefix')]"
+          },
+          "privateEndpointSubnetPrefix": {
+            "value": "[parameters('privateEndpointSubnetPrefix')]"
+          },
+          "applicationNsgId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-module', parameters('applicationNsgName'))), '2025-04-01').outputs.resourceId.value]"
+          },
+          "databaseSubnetPrefix": {
+            "value": "[parameters('databaseSubnetPrefix')]"
+          },
+          "databaseNsgId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-module', parameters('databaseNsgName'))), '2025-04-01').outputs.resourceId.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.46.1.21595",
+              "templateHash": "85461929422789374"
+            }
+          },
+          "parameters": {
+            "vnetName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "object"
+            },
+            "addressSpace": {
+              "type": "string"
+            },
+            "applicationSubnetPrefix": {
+              "type": "string"
+            },
+            "privateEndpointSubnetPrefix": {
+              "type": "string"
+            },
+            "applicationNsgId": {
+              "type": "string"
+            },
+            "databaseSubnetPrefix": {
+              "type": "string"
+            },
+            "databaseNsgId": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/virtualNetworks",
+              "apiVersion": "2024-05-01",
+              "name": "[parameters('vnetName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "addressSpace": {
+                  "addressPrefixes": [
+                    "[parameters('addressSpace')]"
+                  ]
+                },
+                "subnets": [
+                  {
+                    "name": "application",
+                    "properties": {
+                      "addressPrefix": "[parameters('applicationSubnetPrefix')]",
+                      "networkSecurityGroup": {
+                        "id": "[parameters('applicationNsgId')]"
+                      },
+                      "privateEndpointNetworkPolicies": "Enabled"
+                    }
+                  },
+                  {
+                    "name": "private-endpoints",
+                    "properties": {
+                      "addressPrefix": "[parameters('privateEndpointSubnetPrefix')]",
+                      "privateEndpointNetworkPolicies": "Disabled"
+                    }
+                  },
+                  {
+                    "name": "database-postgresql-future",
+                    "properties": {
+                      "addressPrefix": "[parameters('databaseSubnetPrefix')]",
+                      "networkSecurityGroup": {
+                        "id": "[parameters('databaseNsgId')]"
+                      },
+                      "delegations": [
+                        {
+                          "name": "postgresql-flexible-server",
+                          "properties": {
+                            "serviceName": "Microsoft.DBforPostgreSQL/flexibleServers"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "outputs": {
+            "resourceId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-module', parameters('applicationNsgName')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-module', parameters('databaseNsgName')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "future-postgresql-private-contract",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "databaseSubnetPrefix": {
+            "value": "[parameters('databaseSubnetPrefix')]"
+          },
+          "permittedApplicationPort": {
+            "value": 5432
+          },
+          "publicNetworkAccess": {
+            "value": "disabled"
+          },
+          "privateConnectivityPattern": {
+            "value": "vnet-integration"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.46.1.21595",
+              "templateHash": "3682298439495702549"
+            }
+          },
+          "parameters": {
+            "databaseSubnetPrefix": {
+              "type": "string",
+              "metadata": {
+                "description": "Planning-only delegated subnet prefix for future managed PostgreSQL private access."
+              }
+            },
+            "permittedApplicationPort": {
+              "type": "int",
+              "allowedValues": [
+                5432
+              ]
+            },
+            "publicNetworkAccess": {
+              "type": "string",
+              "allowedValues": [
+                "disabled"
+              ]
+            },
+            "privateConnectivityPattern": {
+              "type": "string",
+              "allowedValues": [
+                "vnet-integration"
+              ]
+            }
+          },
+          "resources": [],
+          "outputs": {
+            "databaseSubnetPrefix": {
+              "type": "string",
+              "value": "[parameters('databaseSubnetPrefix')]"
+            },
+            "permittedApplicationPort": {
+              "type": "int",
+              "value": "[parameters('permittedApplicationPort')]"
+            },
+            "publicNetworkAccess": {
+              "type": "string",
+              "value": "[parameters('publicNetworkAccess')]"
+            },
+            "privateConnectivityPattern": {
+              "type": "string",
+              "value": "[parameters('privateConnectivityPattern')]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "future-storage-security-contract",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "storageAccountName": {
+            "value": "[parameters('storageAccountName')]"
+          },
+          "location": {
+            "value": "[parameters('authorizedControlledEvaluationRegion')]"
+          },
+          "tags": {
+            "value": "[variables('governanceTags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.46.1.21595",
+              "templateHash": "2270317685337504818"
+            }
+          },
+          "parameters": {
+            "storageAccountName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "object"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2023-05-01",
+              "name": "[parameters('storageAccountName')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Standard_LRS"
+              },
+              "kind": "StorageV2",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "publicNetworkAccess": "Disabled",
+                "allowBlobPublicAccess": false,
+                "allowSharedKeyAccess": false,
+                "defaultToOAuthAuthentication": true,
+                "supportsHttpsTrafficOnly": true,
+                "minimumTlsVersion": "TLS1_2",
+                "allowCrossTenantReplication": false,
+                "networkAcls": {
+                  "bypass": "None",
+                  "defaultAction": "Deny"
+                },
+                "encryption": {
+                  "keySource": "Microsoft.Storage",
+                  "services": {
+                    "blob": {
+                      "enabled": true
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "resourceId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+            },
+            "publicDataPlane": {
+              "type": "string",
+              "value": "denied"
+            },
+            "anonymousBlobAccess": {
+              "type": "bool",
+              "value": false
+            },
+            "sharedKeyBaseline": {
+              "type": "string",
+              "value": "disabled-planning-baseline"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "future-identity-security-contract",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "identityProviderMode": {
+            "value": "[parameters('identityProviderMode')]"
+          },
+          "tenantAuthorityReference": {
+            "value": "[parameters('tenantAuthorityReference')]"
+          },
+          "issuerValidationReference": {
+            "value": "[parameters('issuerValidationReference')]"
+          },
+          "audienceValidationReference": {
+            "value": "[parameters('audienceValidationReference')]"
+          },
+          "redirectUriPolicyReference": {
+            "value": "[parameters('redirectUriPolicyReference')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.46.1.21595",
+              "templateHash": "6300630727601319471"
+            }
+          },
+          "parameters": {
+            "identityProviderMode": {
+              "type": "string",
+              "allowedValues": [
+                "SYNTHETIC_ONLY",
+                "AUTHORITY_REQUIRED"
+              ]
+            },
+            "tenantAuthorityReference": {
+              "type": "string",
+              "allowedValues": [
+                "AUTHORITY_REQUIRED"
+              ]
+            },
+            "issuerValidationReference": {
+              "type": "string",
+              "allowedValues": [
+                "AUTHORITY_REQUIRED"
+              ]
+            },
+            "audienceValidationReference": {
+              "type": "string",
+              "allowedValues": [
+                "AUTHORITY_REQUIRED"
+              ]
+            },
+            "redirectUriPolicyReference": {
+              "type": "string",
+              "allowedValues": [
+                "AUTHORITY_REQUIRED"
+              ]
+            }
+          },
+          "resources": [],
+          "outputs": {
+            "identityProviderModeOutput": {
+              "type": "string",
+              "value": "[parameters('identityProviderMode')]"
+            },
+            "tenantAuthorityReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('tenantAuthorityReference')]"
+            },
+            "issuerValidationReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('issuerValidationReference')]"
+            },
+            "audienceValidationReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('audienceValidationReference')]"
+            },
+            "redirectUriPolicyReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('redirectUriPolicyReference')]"
+            },
+            "tenantConfigured": {
+              "type": "bool",
+              "value": false
+            },
+            "applicationRegistrationConfigured": {
+              "type": "bool",
+              "value": false
+            },
+            "managedIdentityConfigured": {
+              "type": "bool",
+              "value": false
+            },
+            "providerVerificationRequired": {
+              "type": "bool",
+              "value": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "future-observability-contract",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "observabilityMode": {
+            "value": "[parameters('observabilityMode')]"
+          },
+          "destinationEligibilityReference": {
+            "value": "[parameters('destinationEligibilityReference')]"
+          },
+          "retentionPolicyReference": {
+            "value": "[parameters('retentionPolicyReference')]"
+          },
+          "residencyVerificationReference": {
+            "value": "[parameters('residencyVerificationReference')]"
+          },
+          "alertingPolicyReference": {
+            "value": "[parameters('alertingPolicyReference')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.46.1.21595",
+              "templateHash": "16314864892376368031"
+            }
+          },
+          "parameters": {
+            "observabilityMode": {
+              "type": "string",
+              "allowedValues": [
+                "SYNTHETIC_ONLY",
+                "AUTHORITY_REQUIRED"
+              ]
+            },
+            "destinationEligibilityReference": {
+              "type": "string",
+              "allowedValues": [
+                "AUTHORITY_REQUIRED"
+              ]
+            },
+            "retentionPolicyReference": {
+              "type": "string",
+              "allowedValues": [
+                "AUTHORITY_REQUIRED"
+              ]
+            },
+            "residencyVerificationReference": {
+              "type": "string",
+              "allowedValues": [
+                "AUTHORITY_REQUIRED"
+              ]
+            },
+            "alertingPolicyReference": {
+              "type": "string",
+              "allowedValues": [
+                "AUTHORITY_REQUIRED"
+              ]
+            }
+          },
+          "resources": [],
+          "outputs": {
+            "observabilityModeOutput": {
+              "type": "string",
+              "value": "[parameters('observabilityMode')]"
+            },
+            "destinationEligibilityReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('destinationEligibilityReference')]"
+            },
+            "residencyVerificationReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('residencyVerificationReference')]"
+            },
+            "alertingPolicyReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('alertingPolicyReference')]"
+            },
+            "destinationConfigured": {
+              "type": "bool",
+              "value": false
+            },
+            "telemetryExportConfigured": {
+              "type": "bool",
+              "value": false
+            },
+            "providerVerificationRequired": {
+              "type": "bool",
+              "value": true
+            },
+            "retentionPolicyReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('retentionPolicyReference')]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "future-key-vault-security-contract",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "keyVaultMode": {
+            "value": "[parameters('keyVaultMode')]"
+          },
+          "publicNetworkAccess": {
+            "value": "disabled"
+          },
+          "authorizationModel": {
+            "value": "rbac-required"
+          },
+          "softDeleteRequirement": {
+            "value": "required-before-production"
+          },
+          "purgeProtectionRequirement": {
+            "value": "required-before-production"
+          },
+          "privateConnectivityReference": {
+            "value": "[parameters('keyVaultPrivateConnectivityReference')]"
+          },
+          "diagnosticsReference": {
+            "value": "[parameters('keyVaultDiagnosticsReference')]"
+          },
+          "regionalCapabilityReference": {
+            "value": "[parameters('keyVaultRegionalCapabilityReference')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.46.1.21595",
+              "templateHash": "4298311679268904966"
+            }
+          },
+          "parameters": {
+            "keyVaultMode": {
+              "type": "string",
+              "allowedValues": [
+                "SYNTHETIC_ONLY",
+                "AUTHORITY_REQUIRED"
+              ]
+            },
+            "publicNetworkAccess": {
+              "type": "string",
+              "allowedValues": [
+                "disabled"
+              ]
+            },
+            "authorizationModel": {
+              "type": "string",
+              "allowedValues": [
+                "rbac-required"
+              ]
+            },
+            "softDeleteRequirement": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            },
+            "purgeProtectionRequirement": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            },
+            "privateConnectivityReference": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            },
+            "diagnosticsReference": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            },
+            "regionalCapabilityReference": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            }
+          },
+          "resources": [],
+          "outputs": {
+            "keyVaultModeOutput": {
+              "type": "string",
+              "value": "[parameters('keyVaultMode')]"
+            },
+            "publicNetworkAccessOutput": {
+              "type": "string",
+              "value": "[parameters('publicNetworkAccess')]"
+            },
+            "authorizationModelOutput": {
+              "type": "string",
+              "value": "[parameters('authorizationModel')]"
+            },
+            "softDeleteRequirementOutput": {
+              "type": "string",
+              "value": "[parameters('softDeleteRequirement')]"
+            },
+            "purgeProtectionRequirementOutput": {
+              "type": "string",
+              "value": "[parameters('purgeProtectionRequirement')]"
+            },
+            "privateConnectivityReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('privateConnectivityReference')]"
+            },
+            "diagnosticsReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('diagnosticsReference')]"
+            },
+            "regionalCapabilityReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('regionalCapabilityReference')]"
+            },
+            "vaultConfigured": {
+              "type": "bool",
+              "value": false
+            },
+            "managedHsmConfigured": {
+              "type": "bool",
+              "value": false
+            },
+            "providerVerificationRequired": {
+              "type": "bool",
+              "value": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "future-recovery-security-contract",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "recoveryMode": {
+            "value": "[parameters('recoveryMode')]"
+          },
+          "backupIntegrityReference": {
+            "value": "[parameters('backupIntegrityReference')]"
+          },
+          "restoreAuthorizationReference": {
+            "value": "[parameters('restoreAuthorizationReference')]"
+          },
+          "retentionAndHoldReference": {
+            "value": "[parameters('retentionAndHoldReference')]"
+          },
+          "encryptionKeyReference": {
+            "value": "[parameters('backupEncryptionKeyReference')]"
+          },
+          "regionalCapabilityReference": {
+            "value": "[parameters('recoveryRegionalCapabilityReference')]"
+          },
+          "crossRegionPosture": {
+            "value": "same-region-first"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.46.1.21595",
+              "templateHash": "9610318014948129611"
+            }
+          },
+          "parameters": {
+            "recoveryMode": {
+              "type": "string",
+              "allowedValues": [
+                "SYNTHETIC_ONLY",
+                "AUTHORITY_REQUIRED"
+              ]
+            },
+            "backupIntegrityReference": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            },
+            "restoreAuthorizationReference": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            },
+            "retentionAndHoldReference": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            },
+            "encryptionKeyReference": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            },
+            "regionalCapabilityReference": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            },
+            "crossRegionPosture": {
+              "type": "string",
+              "allowedValues": [
+                "same-region-first"
+              ]
+            }
+          },
+          "resources": [],
+          "outputs": {
+            "recoveryModeOutput": {
+              "type": "string",
+              "value": "[parameters('recoveryMode')]"
+            },
+            "backupIntegrityReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('backupIntegrityReference')]"
+            },
+            "restoreAuthorizationReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('restoreAuthorizationReference')]"
+            },
+            "retentionAndHoldReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('retentionAndHoldReference')]"
+            },
+            "encryptionKeyReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('encryptionKeyReference')]"
+            },
+            "regionalCapabilityReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('regionalCapabilityReference')]"
+            },
+            "crossRegionPostureOutput": {
+              "type": "string",
+              "value": "[parameters('crossRegionPosture')]"
+            },
+            "backupVaultConfigured": {
+              "type": "bool",
+              "value": false
+            },
+            "recoveryServiceConfigured": {
+              "type": "bool",
+              "value": false
+            },
+            "providerVerificationRequired": {
+              "type": "bool",
+              "value": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "future-cicd-security-contract",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "cicdMode": {
+            "value": "[parameters('cicdMode')]"
+          },
+          "pipelineIdentityReference": {
+            "value": "[parameters('pipelineIdentityReference')]"
+          },
+          "artifactIntegrityReference": {
+            "value": "[parameters('artifactIntegrityReference')]"
+          },
+          "releaseAuthorizationReference": {
+            "value": "[parameters('releaseAuthorizationReference')]"
+          },
+          "targetRegionEligibilityReference": {
+            "value": "[parameters('cicdTargetRegionEligibilityReference')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.46.1.21595",
+              "templateHash": "10367834463994604259"
+            }
+          },
+          "parameters": {
+            "cicdMode": {
+              "type": "string",
+              "allowedValues": [
+                "SYNTHETIC_ONLY",
+                "AUTHORITY_REQUIRED"
+              ]
+            },
+            "pipelineIdentityReference": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            },
+            "artifactIntegrityReference": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            },
+            "releaseAuthorizationReference": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            },
+            "targetRegionEligibilityReference": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            }
+          },
+          "resources": [],
+          "outputs": {
+            "cicdModeOutput": {
+              "type": "string",
+              "value": "[parameters('cicdMode')]"
+            },
+            "pipelineIdentityReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('pipelineIdentityReference')]"
+            },
+            "artifactIntegrityReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('artifactIntegrityReference')]"
+            },
+            "releaseAuthorizationReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('releaseAuthorizationReference')]"
+            },
+            "targetRegionEligibilityReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('targetRegionEligibilityReference')]"
+            },
+            "deploymentConfigured": {
+              "type": "bool",
+              "value": false
+            },
+            "remoteCIVerified": {
+              "type": "bool",
+              "value": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "future-operations-contract",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "operationsMode": {
+            "value": "[parameters('operationsMode')]"
+          },
+          "maintenanceAuthorityReference": {
+            "value": "[parameters('maintenanceAuthorityReference')]"
+          },
+          "operationalIdentityReference": {
+            "value": "[parameters('operationalIdentityReference')]"
+          },
+          "alertingEligibilityReference": {
+            "value": "[parameters('alertingEligibilityReference')]"
+          },
+          "incidentEscalationReference": {
+            "value": "[parameters('incidentEscalationReference')]"
+          },
+          "regionalCapabilityReference": {
+            "value": "[parameters('operationsRegionalCapabilityReference')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.46.1.21595",
+              "templateHash": "7790577215197682658"
+            }
+          },
+          "parameters": {
+            "operationsMode": {
+              "type": "string"
+            },
+            "maintenanceAuthorityReference": {
+              "type": "string"
+            },
+            "operationalIdentityReference": {
+              "type": "string"
+            },
+            "alertingEligibilityReference": {
+              "type": "string"
+            },
+            "incidentEscalationReference": {
+              "type": "string"
+            },
+            "regionalCapabilityReference": {
+              "type": "string"
+            }
+          },
+          "resources": [],
+          "outputs": {
+            "operationsModeOutput": {
+              "type": "string",
+              "value": "[parameters('operationsMode')]"
+            },
+            "maintenanceAuthorityOutput": {
+              "type": "string",
+              "value": "[parameters('maintenanceAuthorityReference')]"
+            },
+            "operationalIdentityOutput": {
+              "type": "string",
+              "value": "[parameters('operationalIdentityReference')]"
+            },
+            "alertingEligibilityOutput": {
+              "type": "string",
+              "value": "[parameters('alertingEligibilityReference')]"
+            },
+            "incidentEscalationOutput": {
+              "type": "string",
+              "value": "[parameters('incidentEscalationReference')]"
+            },
+            "regionalCapabilityOutput": {
+              "type": "string",
+              "value": "[parameters('regionalCapabilityReference')]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "future-privacy-lifecycle-contract",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "privacyMode": {
+            "value": "[parameters('privacyMode')]"
+          },
+          "classificationReference": {
+            "value": "[parameters('classificationReference')]"
+          },
+          "lifecyclePolicyReference": {
+            "value": "[parameters('lifecyclePolicyReference')]"
+          },
+          "holdAuthorityReference": {
+            "value": "[parameters('holdAuthorityReference')]"
+          },
+          "exportAuthorizationReference": {
+            "value": "[parameters('exportAuthorizationReference')]"
+          },
+          "auditEvidenceReference": {
+            "value": "[parameters('privacyAuditEvidenceReference')]"
+          },
+          "providerLifecycleEligibilityReference": {
+            "value": "[parameters('privacyProviderLifecycleEligibilityReference')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.46.1.21595",
+              "templateHash": "17093780722259326392"
+            }
+          },
+          "parameters": {
+            "privacyMode": {
+              "type": "string"
+            },
+            "classificationReference": {
+              "type": "string"
+            },
+            "lifecyclePolicyReference": {
+              "type": "string"
+            },
+            "holdAuthorityReference": {
+              "type": "string"
+            },
+            "exportAuthorizationReference": {
+              "type": "string"
+            },
+            "auditEvidenceReference": {
+              "type": "string"
+            },
+            "providerLifecycleEligibilityReference": {
+              "type": "string"
+            }
+          },
+          "resources": [],
+          "outputs": {
+            "privacyModeOutput": {
+              "type": "string",
+              "value": "[parameters('privacyMode')]"
+            },
+            "classificationReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('classificationReference')]"
+            },
+            "lifecyclePolicyReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('lifecyclePolicyReference')]"
+            },
+            "holdAuthorityReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('holdAuthorityReference')]"
+            },
+            "exportAuthorizationReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('exportAuthorizationReference')]"
+            },
+            "auditEvidenceReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('auditEvidenceReference')]"
+            },
+            "providerLifecycleEligibilityReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('providerLifecycleEligibilityReference')]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "future-application-security-contract",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "applicationSecurityMode": {
+            "value": "[parameters('applicationSecurityMode')]"
+          },
+          "ingressDefaultDeny": {
+            "value": "[parameters('ingressDefaultDeny')]"
+          },
+          "corsMode": {
+            "value": "[parameters('corsMode')]"
+          },
+          "securityHeadersRequirement": {
+            "value": "[parameters('securityHeadersRequirement')]"
+          },
+          "rateLimitPolicyReference": {
+            "value": "[parameters('rateLimitPolicyReference')]"
+          },
+          "diagnosticEvidenceReference": {
+            "value": "[parameters('applicationSecurityDiagnosticEvidenceReference')]"
+          },
+          "wafCdnEligibilityReference": {
+            "value": "[parameters('wafCdnEligibilityReference')]"
+          },
+          "applicationSecurityRegionalCapabilityReference": {
+            "value": "[parameters('applicationSecurityRegionalCapabilityReference')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.46.1.21595",
+              "templateHash": "10683786124197014860"
+            }
+          },
+          "parameters": {
+            "applicationSecurityMode": {
+              "type": "string",
+              "allowedValues": [
+                "SYNTHETIC_ONLY"
+              ]
+            },
+            "ingressDefaultDeny": {
+              "type": "string",
+              "allowedValues": [
+                "deny-by-default"
+              ]
+            },
+            "corsMode": {
+              "type": "string",
+              "allowedValues": [
+                "same-origin-only"
+              ]
+            },
+            "securityHeadersRequirement": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            },
+            "rateLimitPolicyReference": {
+              "type": "string"
+            },
+            "diagnosticEvidenceReference": {
+              "type": "string"
+            },
+            "wafCdnEligibilityReference": {
+              "type": "string"
+            },
+            "applicationSecurityRegionalCapabilityReference": {
+              "type": "string"
+            }
+          },
+          "resources": [],
+          "outputs": {
+            "applicationSecurityModeOutput": {
+              "type": "string",
+              "value": "[parameters('applicationSecurityMode')]"
+            },
+            "ingressDefaultDenyOutput": {
+              "type": "string",
+              "value": "[parameters('ingressDefaultDeny')]"
+            },
+            "corsModeOutput": {
+              "type": "string",
+              "value": "[parameters('corsMode')]"
+            },
+            "securityHeadersRequirementOutput": {
+              "type": "string",
+              "value": "[parameters('securityHeadersRequirement')]"
+            },
+            "rateLimitPolicyReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('rateLimitPolicyReference')]"
+            },
+            "diagnosticEvidenceReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('diagnosticEvidenceReference')]"
+            },
+            "wafCdnEligibilityReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('wafCdnEligibilityReference')]"
+            },
+            "applicationSecurityRegionalCapabilityReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('applicationSecurityRegionalCapabilityReference')]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "future-resilience-contract",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "resilienceMode": {
+            "value": "[parameters('resilienceMode')]"
+          },
+          "readinessRequirement": {
+            "value": "[parameters('readinessRequirement')]"
+          },
+          "resourceBoundsRequirement": {
+            "value": "[parameters('resourceBoundsRequirement')]"
+          },
+          "retryPolicyReference": {
+            "value": "[parameters('retryPolicyReference')]"
+          },
+          "queueConfigurationReference": {
+            "value": "[parameters('queueConfigurationReference')]"
+          },
+          "diagnosticsReference": {
+            "value": "[parameters('resilienceDiagnosticsReference')]"
+          },
+          "autoscalingEligibilityReference": {
+            "value": "[parameters('autoscalingEligibilityReference')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.46.1.21595",
+              "templateHash": "12775859671780651795"
+            }
+          },
+          "parameters": {
+            "resilienceMode": {
+              "type": "string",
+              "allowedValues": [
+                "SYNTHETIC_ONLY"
+              ]
+            },
+            "readinessRequirement": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            },
+            "resourceBoundsRequirement": {
+              "type": "string",
+              "allowedValues": [
+                "required-before-production"
+              ]
+            },
+            "retryPolicyReference": {
+              "type": "string"
+            },
+            "queueConfigurationReference": {
+              "type": "string"
+            },
+            "diagnosticsReference": {
+              "type": "string"
+            },
+            "autoscalingEligibilityReference": {
+              "type": "string"
+            }
+          },
+          "resources": [],
+          "outputs": {
+            "resilienceModeOutput": {
+              "type": "string",
+              "value": "[parameters('resilienceMode')]"
+            },
+            "readinessRequirementOutput": {
+              "type": "string",
+              "value": "[parameters('readinessRequirement')]"
+            },
+            "resourceBoundsRequirementOutput": {
+              "type": "string",
+              "value": "[parameters('resourceBoundsRequirement')]"
+            },
+            "retryPolicyReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('retryPolicyReference')]"
+            },
+            "queueConfigurationReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('queueConfigurationReference')]"
+            },
+            "diagnosticsReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('diagnosticsReference')]"
+            },
+            "autoscalingEligibilityReferenceOutput": {
+              "type": "string",
+              "value": "[parameters('autoscalingEligibilityReference')]"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "virtualNetworkId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-module', parameters('vnetName'))), '2025-04-01').outputs.resourceId.value]"
+    },
+    "applicationNetworkSecurityGroupId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-module', parameters('applicationNsgName'))), '2025-04-01').outputs.resourceId.value]"
+    },
+    "databaseNetworkSecurityGroupId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-module', parameters('databaseNsgName'))), '2025-04-01').outputs.resourceId.value]"
+    },
+    "futurePostgresqlPort": {
+      "type": "int",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'future-postgresql-private-contract'), '2025-04-01').outputs.permittedApplicationPort.value]"
+    },
+    "futureStorageId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'future-storage-security-contract'), '2025-04-01').outputs.resourceId.value]"
+    },
+    "futureIdentityProviderMode": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'future-identity-security-contract'), '2025-04-01').outputs.identityProviderModeOutput.value]"
+    },
+    "futureObservabilityMode": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'future-observability-contract'), '2025-04-01').outputs.observabilityModeOutput.value]"
+    },
+    "futureKeyVaultMode": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'future-key-vault-security-contract'), '2025-04-01').outputs.keyVaultModeOutput.value]"
+    },
+    "futureRecoveryMode": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'future-recovery-security-contract'), '2025-04-01').outputs.recoveryModeOutput.value]"
+    },
+    "futureCicdMode": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'future-cicd-security-contract'), '2025-04-01').outputs.cicdModeOutput.value]"
+    },
+    "futureOperationsMode": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'future-operations-contract'), '2025-04-01').outputs.operationsModeOutput.value]"
+    },
+    "futurePrivacyMode": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'future-privacy-lifecycle-contract'), '2025-04-01').outputs.privacyModeOutput.value]"
+    },
+    "futureApplicationSecurityMode": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'future-application-security-contract'), '2025-04-01').outputs.applicationSecurityModeOutput.value]"
+    },
+    "futureResilienceMode": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'future-resilience-contract'), '2025-04-01').outputs.resilienceModeOutput.value]"
+    },
+    "declaredEnvironment": {
+      "type": "string",
+      "value": "[parameters('environment')]"
+    },
+    "declaredRegion": {
+      "type": "string",
+      "value": "[parameters('authorizedControlledEvaluationRegion')]"
+    }
+  }
+}

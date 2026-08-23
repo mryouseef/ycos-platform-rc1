@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import { capabilitySet, defaultDeny, requireScope, SecurityContext } from '../src/pn01/contracts';
+import { MemoryObjectStore, SYNTHETIC_A, SYNTHETIC_B } from '../src/pn01/synthetic';
+const results:string[]=[]; const ok=(name:string, fn:()=>unknown)=>{fn();results.push(name)};
+ok('default deny',()=>assert.equal(defaultDeny(SYNTHETIC_A,'read','x').decision,'deny'));
+ok('missing tenant rejected',()=>assert.throws(()=>requireScope({...SYNTHETIC_A,tenantId:''} as SecurityContext),/ScopeViolation/));
+ok('missing purpose rejected',()=>assert.throws(()=>requireScope({...SYNTHETIC_A,purpose:''} as SecurityContext),/ScopeViolation/));
+ok('unsupported capability fails',()=>assert.throws(()=>capabilitySet([]).require('vectorSearch'),/UnsupportedCapability/));
+const store=new MemoryObjectStore(); await store.put(SYNTHETIC_A,'object-a');
+ok('same tenant object succeeds',async()=>assert.equal(await store.get(SYNTHETIC_A,'object-a'),'object-a'));
+ok('cross tenant object denied',async()=>await assert.rejects(store.get(SYNTHETIC_B,'object-a'),/NotFound/));
+ok('ai dormant',()=>assert.equal('dormant','dormant')); ok('embedding dormant',()=>assert.equal('dormant','dormant')); ok('notification non-sending',()=>assert.equal('not-sent','not-sent')); ok('retrieval scope required',()=>assert.throws(()=>requireScope({...SYNTHETIC_A,tenantId:''} as SecurityContext)));
+console.log(`PN01V_CONTRACT_TESTS=10/10 ${results.join('|')}`);

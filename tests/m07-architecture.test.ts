@@ -1,0 +1,1 @@
+import test from"node:test";import assert from"node:assert/strict";import{execFileSync}from"node:child_process";test("M07 project-path scanner and isolated fixture proof pass",()=>{const out=execFileSync("node",["scripts/verify_m07_architecture.mjs","."],{encoding:"utf8"});assert.match(out,/rules=8 fixtureProjects=8/)})

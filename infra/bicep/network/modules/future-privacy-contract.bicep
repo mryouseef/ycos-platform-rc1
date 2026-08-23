@@ -1,0 +1,16 @@
+// EP-11 planning-only privacy/lifecycle contract. It declares no provider resource.
+param privacyMode string
+param classificationReference string
+param lifecyclePolicyReference string
+param holdAuthorityReference string
+param exportAuthorizationReference string
+param auditEvidenceReference string
+param providerLifecycleEligibilityReference string
+
+output privacyModeOutput string = privacyMode
+output classificationReferenceOutput string = classificationReference
+output lifecyclePolicyReferenceOutput string = lifecyclePolicyReference
+output holdAuthorityReferenceOutput string = holdAuthorityReference
+output exportAuthorizationReferenceOutput string = exportAuthorizationReference
+output auditEvidenceReferenceOutput string = auditEvidenceReference
+output providerLifecycleEligibilityReferenceOutput string = providerLifecycleEligibilityReference

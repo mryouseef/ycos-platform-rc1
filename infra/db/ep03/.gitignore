@@ -1,0 +1,4 @@
+# Local disposable PostgreSQL harness output must never be committed.
+data/
+evidence/
+*.log

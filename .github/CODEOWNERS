@@ -1,0 +1,8 @@
+# Security-sensitive review ownership. Replace the role aliases with named owners only through an approved governance change.
+/infra/pn03/migrations/ @ycos-security-review
+/infra/ile01/migrations/ @ycos-security-review
+/src/ile01/ @ycos-security-review
+/src/iaf01/ @ycos-security-review
+/scripts/verify_m04_absence.mjs @ycos-security-review
+/package.json @ycos-security-review
+/pnpm-lock.yaml @ycos-security-review

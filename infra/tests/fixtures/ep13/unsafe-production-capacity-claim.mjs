@@ -1,0 +1,1 @@
+const claim = "PRODUCTION_CAPACITY_VERIFIED"

@@ -1,0 +1,1 @@
+function restoreWithoutIntegrityCheck() { return true; }

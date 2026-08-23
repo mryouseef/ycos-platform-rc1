@@ -1,0 +1,3 @@
+"use client";
+/** YCOS M-02 design: context-free root error state prevents sensitive disclosure when route context is unavailable. */
+export default function GlobalError({ reset }: Readonly<{ error: Error & { digest?: string }; reset: () => void }>) { return <html lang="en" dir="ltr"><body><main className="not-found"><span className="eyebrow">Safe state / <bdi lang="ar" dir="rtl">حالة آمنة</bdi></span><h1>This page cannot be displayed right now</h1><p lang="ar" dir="rtl">تعذر عرض هذه الصفحة الآن. لم تُكشف أي تفاصيل تقنية.</p><p>No technical details were disclosed. You can retry locally.</p><button className="button button--gold" type="button" onClick={reset}>Try again / إعادة المحاولة</button></main></body></html>; }

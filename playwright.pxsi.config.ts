@@ -1,0 +1,2 @@
+import { defineConfig, devices } from '@playwright/test'
+export default defineConfig({testDir:'./tests/e2e',timeout:45_000,workers:1,reporter:'list',use:{baseURL:process.env.PXSIBASEURL??'http://127.0.0.1:3011',browserName:'chromium',headless:true,launchOptions:{executablePath:'/usr/bin/chromium',args:['--no-sandbox','--disable-dev-shm-usage']},trace:'retain-on-failure'},projects:[{name:'chromium',use:{...devices['Desktop Chrome']}}]})

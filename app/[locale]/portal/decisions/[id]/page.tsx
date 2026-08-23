@@ -1,0 +1,1 @@
+import{M07Page}from"@/src/m07/m07-page";export const metadata={robots:{index:false,follow:false}};export default async function Page({params}:{params:Promise<{locale:string;id:string}>}){const{locale,id}=await params;return <M07Page locale={locale} resource="DECISIONS" mode="decision" id={id}/>}

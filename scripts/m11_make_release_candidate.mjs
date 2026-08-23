@@ -1,0 +1,20 @@
+import { createHash } from "node:crypto";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { join, relative } from "node:path";
+import { execFileSync } from "node:child_process";
+
+const root = process.cwd();
+const output = join(root, "artifacts", "m11", "release-candidate");
+const buildRoot = join(root, ".next");
+if (!existsSync(buildRoot)) throw new Error("M11_BUILD_OUTPUT_MISSING");
+rmSync(output, { recursive: true, force: true });
+mkdirSync(output, { recursive: true });
+const files = [];
+const walk = (dir) => { for (const entry of readdirSync(dir)) { const path = join(dir, entry); if (statSync(path).isDirectory()) walk(path); else files.push(path); } };
+walk(buildRoot);
+const manifest = files.sort().map((file) => `${createHash("sha256").update(readFileSync(file)).digest("hex")}  ${relative(root, file)}`).join("\n") + "\n";
+writeFileSync(join(output, "M-11-BUILD-SHA256SUMS.txt"), manifest);
+const revision = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+const packageManager = JSON.parse(readFileSync(join(root, "package.json"), "utf8")).packageManager;
+writeFileSync(join(output, "build-provenance.json"), `${JSON.stringify({ revision, runtime: process.version, packageManager, data: "SYNTHETIC_ONLY", environment: "NON_PRODUCTION_VERIFICATION_ONLY", deploymentAuthority: "NONE", files: files.length }, null, 2)}\n`);
+console.log(`M11_RELEASE_CANDIDATE_CREATED files=${files.length}`);

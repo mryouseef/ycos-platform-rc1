@@ -1,0 +1,1 @@
+import{M08Page}from"@/src/m08/m08-page";export default async function Page({params}:{params:Promise<{locale:string}>}){const{locale}=await params;return <M08Page locale={locale} resource="DOCUMENTS" mode="documents"/>}export const metadata={robots:{index:false,follow:false}};

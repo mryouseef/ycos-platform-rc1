@@ -1,0 +1,2 @@
+const cookie = { sameSite: "none" };
+

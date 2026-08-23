@@ -1,0 +1,1 @@
+SELECT set_config('app.client_id', '00000000-0000-0000-0000-0000000000a1', false);

@@ -1,0 +1,15 @@
+import fs from "node:fs";import os from "node:os";import path from "node:path";
+const rules=[
+ ["M09-NETWORK-PROVIDER",/\bfetch\(|\baxios\.|from\s+["'](?:openai|@supabase|pg|prisma-client)["']/i,"runtime provider, AI, network or database invocation"],
+ ["M09-UNSAFE-HTML",/dangerouslySetInnerHTML|\.innerHTML\s*=/,"unsafe HTML sink"],
+ ["M09-PHYSICAL-DELETE",/physicalDelete|rmSync\(|unlinkSync\(/,"physical deletion implementation"],
+ ["M09-AUDIT-ALLOW-REASON",/outcome:\s*["']ALLOW["']\s*,\s*reason\s*:/,"ALLOW audit with denial reason"],
+ ["M09-CLIENT-SERVICE",/["']use client["'][\s\S]{0,800}from\s+["'][^"']*\/(repository|service)["']/,"client direct service or repository access"],
+ ["M09-RAW-ACTOR-FIELD",/form(?:Data)?\.get\(["'](?:actorId|userId|membershipId|role|tenantId|clientId|recordsAuthority|approvalAuthority|reviewAuthority)["']\)/,"request-supplied authority field read"],
+ ["M09-NONLOCAL-ASSET",/(?:src|href)\s*=\s*["']https:\/\/(?!owasp\.org\/)/,"unapproved external runtime asset"],
+ ["M09-CLASSIFICATION-DOWNGRADE",/classification:\s*["']INTERNAL["'][\s\S]{0,180}sourceId:/,"implicit derived classification downgrade"],
+];
+const files=(root)=>{const out=[];for(const base of["app","src/m06","src/m07","src/m08","src/security"]){const start=path.join(root,base);if(!fs.existsSync(start))continue;const walk=(d)=>{for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory())walk(p);else if(e.isFile()&&/\.(ts|tsx|css)$/.test(p))out.push(p)}};walk(start)}return out};
+export function scanProject(root){const hits=[];for(const f of files(root)){const rel=path.relative(root,f);if(rel.startsWith("artifacts/")||rel.startsWith("docs/"))continue;const s=fs.readFileSync(f,"utf8");for(const [code,re,detail] of rules)if(re.test(s))hits.push({code,file:rel,detail})}return hits}
+export function fixtureProof(){const root=fs.mkdtempSync(path.join(os.tmpdir(),"m09-fixtures-"));const results=[];for(const [code,re] of rules){const d=path.join(root,code,"src","m08");fs.mkdirSync(d,{recursive:true});const samples={"M09-NETWORK-PROVIDER":"fetch('https://x')","M09-UNSAFE-HTML":"el.innerHTML = input","M09-PHYSICAL-DELETE":"rmSync('x')","M09-AUDIT-ALLOW-REASON":"({outcome:'ALLOW', reason:'NO'})","M09-CLIENT-SERVICE":"'use client'; import x from './repository'","M09-RAW-ACTOR-FIELD":"form.get('actorId')","M09-NONLOCAL-ASSET":"<img src='https://evil.example/a'/>","M09-CLASSIFICATION-DOWNGRADE":"const x={classification:'INTERNAL', sourceId:'doc'}"};fs.writeFileSync(path.join(d,"violation.ts"),samples[code]);const found=scanProject(path.join(root,code)).some(x=>x.code===code);results.push({code,found})}fs.rmSync(root,{recursive:true,force:true});return results}
+if(import.meta.url===`file://${process.argv[1]}`){const root=process.cwd();const hits=scanProject(root);const fixtures=fixtureProof();if(hits.length||fixtures.some(x=>!x.found)){console.error(JSON.stringify({hits,fixtures},null,2));process.exit(1)}console.log(`M09_ARCHITECTURE_PASS rules=${rules.length} fixtures=${fixtures.length}`)}

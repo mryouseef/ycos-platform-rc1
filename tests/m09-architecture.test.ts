@@ -1,0 +1,1 @@
+import test from "node:test";import assert from "node:assert/strict";import{fixtureProof,scanProject}from"../scripts/verify_m09_architecture.mjs";test("M09 scanner passes active project and rejects all isolated security fixtures",()=>{assert.deepEqual(scanProject(process.cwd()),[]);assert.equal(fixtureProof().every(x=>x.found),true)});

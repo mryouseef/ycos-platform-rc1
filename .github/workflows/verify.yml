@@ -1,0 +1,60 @@
+name: YCOS verification
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: synthetic-quality-gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: pnpm
+      - name: Enable package manager
+        run: corepack enable
+      - name: Frozen install
+        run: pnpm install --frozen-lockfile
+      - name: Secret pre-check
+        run: node scripts/m11_secret_scan.mjs .
+      - name: Type check
+        run: pnpm run check
+      - name: Lint
+        run: pnpm run lint
+      - name: Full deterministic tests
+        run: node --import tsx --test tests/*.test.ts tests/*.test.tsx
+      - name: Structural coverage gate
+        run: node --import tsx --experimental-test-coverage --test tests/*.test.ts tests/*.test.tsx > artifacts/m11/ci-coverage.txt && node scripts/m11_enforce_coverage.mjs artifacts/m11/ci-coverage.txt
+      - name: Security tests
+        run: node --import tsx --test tests/m09-security.test.ts tests/m08-audit-regression.test.ts
+      - name: Architecture scanners
+        run: node scripts/verify_m05_architecture.mjs && node scripts/verify_m06_architecture.mjs && node scripts/verify_m07_architecture.mjs && node scripts/verify_m08_architecture.mjs && node scripts/verify_m09_architecture.mjs
+      - name: Production build
+        run: pnpm run build
+      - name: Release-candidate provenance and integrity
+        run: node scripts/m11_make_release_candidate.mjs && node scripts/m11_verify_release_candidate.mjs
+      - name: Browser, E2E, and accessibility
+        run: pnpm exec playwright install --with-deps chromium && pnpm exec playwright test tests/e2e/m05-portal.spec.ts tests/e2e/m06-work-management.spec.ts tests/e2e/m07-governance.spec.ts tests/e2e/m08-governance.spec.ts tests/e2e/m09-security.spec.ts
+      - name: Dependency audit
+        run: pnpm audit --json > artifacts/m11/ci-dependency-audit.json && node scripts/m11_enforce_audit.mjs artifacts/m11/ci-dependency-audit.json
+      - name: CI configuration and integrity checks
+        run: node scripts/m11_verify_ci_config.mjs && node scripts/m11_verify_manifest.mjs
+      - name: Collect non-production evidence
+        if: always()
+        run: tar -czf ycos-ci-evidence.tgz artifacts
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ycos-ci-evidence
+          path: ycos-ci-evidence.tgz
+          if-no-files-found: error

@@ -1,0 +1,10 @@
+import type { Scope } from "@/src/portal/policy";
+export type DecisionState="DRAFT"|"PROPOSED"|"UNDER_REVIEW"|"APPROVED"|"REJECTED"|"WITHDRAWN";
+export type ApprovalState="REQUESTED"|"PENDING"|"APPROVED"|"REJECTED"|"EXPIRED"|"WITHDRAWN";
+export type DeliverableState="DRAFT"|"IN_REVIEW"|"APPROVED"|"DELIVERED"|"ARCHIVED";
+export type Decision={id:string;scope:Required<Scope>;ownerMembershipId:string;title:string;state:DecisionState;version:number};
+export type Approval={id:string;decisionId:string;scope:Required<Scope>;requesterMembershipId:string;state:ApprovalState;version:number};
+export type Deliverable={id:string;projectId:string;scope:Required<Scope>;creatorMembershipId:string;title:string;state:DeliverableState;version:number};
+export type M07Error="NOT_FOUND_OR_NOT_AUTHORIZED"|"ACTION_NOT_AUTHORIZED"|"STATE_TRANSITION_NOT_ALLOWED"|"VERSION_CONFLICT"|"SEPARATION_OF_DUTIES_REQUIRED"|"MEMBERSHIP_REQUIRED";
+type AuditBase={event:"M07_COMMAND";correlationId:string;actorId:string;role:string;action:string;resourceType:"DECISION"|"APPROVAL"|"DELIVERABLE";resourceId:string;clientId?:string;previousState?:string;requestedState?:string;versionBefore?:number;versionAfter?:number}; export type AuditIntent=(AuditBase&{outcome:"ALLOW";reason?:never})|(AuditBase&{outcome:"DENY";reason:M07Error})|(AuditBase&{outcome:"CONFLICT";reason:"VERSION_CONFLICT"});
+export type Result<T>={ok:true;value:T;audit:AuditIntent}|{ok:false;error:M07Error;audit:AuditIntent};

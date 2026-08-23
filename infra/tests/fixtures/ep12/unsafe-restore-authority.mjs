@@ -1,0 +1,1 @@
+restoreAllBackups(request);

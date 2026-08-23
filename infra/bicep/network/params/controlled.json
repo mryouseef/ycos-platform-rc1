@@ -1,0 +1,207 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "value": "controlled"
+    },
+    "authorizedControlledEvaluationRegion": {
+      "value": "regionx"
+    },
+    "regionCode": {
+      "value": "regionx"
+    },
+    "addressSpace": {
+      "value": "10.240.0.0/20"
+    },
+    "applicationSubnetPrefix": {
+      "value": "10.240.0.0/24"
+    },
+    "privateEndpointSubnetPrefix": {
+      "value": "10.240.1.0/24"
+    },
+    "databaseSubnetPrefix": {
+      "value": "10.240.2.0/28"
+    },
+    "vnetName": {
+      "value": "ycos-controlled-vnet-regionx-001"
+    },
+    "applicationNsgName": {
+      "value": "ycos-controlled-app-nsg-regionx-001"
+    },
+    "databaseNsgName": {
+      "value": "ycos-controlled-db-nsg-regionx-001"
+    },
+    "storageAccountName": {
+      "value": "ycosctrlstrgx001"
+    },
+    "identityProviderMode": {
+      "value": "SYNTHETIC_ONLY"
+    },
+    "tenantAuthorityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "issuerValidationReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "audienceValidationReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "redirectUriPolicyReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "observabilityMode": {
+      "value": "SYNTHETIC_ONLY"
+    },
+    "destinationEligibilityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "retentionPolicyReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "residencyVerificationReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "alertingPolicyReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "keyVaultMode": {
+      "value": "SYNTHETIC_ONLY"
+    },
+    "keyVaultPrivateConnectivityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "keyVaultDiagnosticsReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "keyVaultRegionalCapabilityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "recoveryMode": {
+      "value": "SYNTHETIC_ONLY"
+    },
+    "backupIntegrityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "restoreAuthorizationReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "retentionAndHoldReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "backupEncryptionKeyReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "recoveryRegionalCapabilityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "cicdMode": {
+      "value": "SYNTHETIC_ONLY"
+    },
+    "pipelineIdentityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "artifactIntegrityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "releaseAuthorizationReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "cicdTargetRegionEligibilityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "operationsMode": {
+      "value": "SYNTHETIC_ONLY"
+    },
+    "maintenanceAuthorityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "operationalIdentityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "alertingEligibilityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "incidentEscalationReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "operationsRegionalCapabilityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "privacyMode": {
+      "value": "SYNTHETIC_ONLY"
+    },
+    "classificationReference": {
+      "value": "SYNTHETIC_EP11_CLASSIFICATION"
+    },
+    "lifecyclePolicyReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "holdAuthorityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "exportAuthorizationReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "privacyAuditEvidenceReference": {
+      "value": "SYNTHETIC_EP06_AUDIT_ONLY"
+    },
+    "privacyProviderLifecycleEligibilityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "applicationSecurityMode": {
+      "value": "SYNTHETIC_ONLY"
+    },
+    "ingressDefaultDeny": {
+      "value": "deny-by-default"
+    },
+    "corsMode": {
+      "value": "same-origin-only"
+    },
+    "securityHeadersRequirement": {
+      "value": "required-before-production"
+    },
+    "rateLimitPolicyReference": {
+      "value": "SYNTHETIC_EP12_LOCAL_ONLY"
+    },
+    "applicationSecurityDiagnosticEvidenceReference": {
+      "value": "SYNTHETIC_EP06_AUDIT_ONLY"
+    },
+    "wafCdnEligibilityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "applicationSecurityRegionalCapabilityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "resilienceMode": {
+      "value": "SYNTHETIC_ONLY"
+    },
+    "readinessRequirement": {
+      "value": "required-before-production"
+    },
+    "resourceBoundsRequirement": {
+      "value": "required-before-production"
+    },
+    "retryPolicyReference": {
+      "value": "SYNTHETIC_EP13_LOCAL_ONLY"
+    },
+    "queueConfigurationReference": {
+      "value": "SYNTHETIC_EP13_LOCAL_ONLY"
+    },
+    "resilienceDiagnosticsReference": {
+      "value": "SYNTHETIC_EP06_AUDIT_ONLY"
+    },
+    "autoscalingEligibilityReference": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "ownerRole": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "costCenter": {
+      "value": "AUTHORITY_REQUIRED"
+    },
+    "residencyTarget": {
+      "value": "PARAMETERIZED"
+    }
+  }
+}

@@ -1,0 +1,4 @@
+import { SecurityContext, requireScope } from './contracts';
+export const SYNTHETIC_A:SecurityContext={requestId:'synthetic-r1',actorId:'SYNTHETIC_ACTOR_A',actorType:'synthetic-user',tenantId:'SYNTHETIC_TENANT_A',roles:['member'],permissions:['read'],purpose:'contract-test',dataScope:'synthetic',correlationId:'synthetic-c1',traceId:'synthetic-t1'};
+export const SYNTHETIC_B:SecurityContext={...SYNTHETIC_A,actorId:'SYNTHETIC_ACTOR_B',tenantId:'SYNTHETIC_TENANT_B',correlationId:'synthetic-c2'};
+export class MemoryObjectStore { private items=new Map<string,string>(); async put(c:SecurityContext,id:string){requireScope(c);this.items.set(`${c.tenantId}:${id}`,id)} async get(c:SecurityContext,id:string){requireScope(c);if(!this.items.has(`${c.tenantId}:${id}`))throw new Error('NotFound');return id} }

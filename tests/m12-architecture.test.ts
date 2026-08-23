@@ -1,0 +1,1 @@
+import assert from"node:assert/strict";import test from"node:test";import{fixtureProof,scanProject}from"../scripts/verify_m12_architecture.mjs";test("M12 scanner accepts active project and rejects isolated operational boundary fixtures",()=>{assert.deepEqual(scanProject(process.cwd()),[]);assert.ok(fixtureProof().every(x=>x.found))});

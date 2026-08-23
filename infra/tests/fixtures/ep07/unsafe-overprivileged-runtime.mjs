@@ -1,0 +1,1 @@
+const runtimePermissions = ['secret.admin'];

@@ -1,0 +1,1 @@
+telemetry.push(event)

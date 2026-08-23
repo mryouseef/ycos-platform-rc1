@@ -1,0 +1,6 @@
+/** PXSI-01 server facade: only fixed synthetic principals are accepted; tenant, role, permission, purpose, and context stay server-derived. */
+import { NextRequest, NextResponse } from 'next/server'
+import { localService, principal, workItemFor } from '@/src/iaf01/local-runtime'
+const reply=(body:Record<string,unknown>,status:number)=>NextResponse.json(body,{status,headers:{'cache-control':'no-store'}})
+export async function GET(request:NextRequest){const p=principal(request.headers.get('x-ycos-local-principal'));const service=await localService();const tenant=p==='SYNTHETIC_B'?'SYNTHETIC_B':'SYNTHETIC_A';const result=await service.read(p,tenant,workItemFor(p));return reply(result.body,result.status)}
+export async function POST(request:NextRequest){const p=principal(request.headers.get('x-ycos-local-principal'));const payload=await request.json().catch(()=>null) as {idempotencyKey?:unknown;expectedVersion?:unknown};const service=await localService();const tenant=p==='SYNTHETIC_B'?'SYNTHETIC_B':'SYNTHETIC_A';const body={tenantId:tenant,workItemId:workItemFor(p),purpose:'work-item',idempotencyKey:typeof payload?.idempotencyKey==='string'?payload.idempotencyKey:'',expectedVersion:payload?.expectedVersion};const result=await service.submit(p,body);return reply(result.body,result.status)}

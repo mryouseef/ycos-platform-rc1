@@ -1,0 +1,9 @@
+# EP-01 boundary: state, plans, credentials, and local environment files never enter source control.
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.pem
+*.pfx
+*.key
+.env
+.env.*
