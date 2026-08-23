@@ -34,7 +34,7 @@ jobs:
       - name: Unit and static verification
         run: node --import tsx --test $(find tests -maxdepth 1 -type f \( -name '*.test.ts' -o -name '*.test.tsx' \) ! -name 'iaf01-postgres-e2e.test.ts' ! -name 'ile01-managed-pooling.test.ts' -print)
       - name: Structural coverage gate
-        run: node --import tsx --experimental-test-coverage --test $(find tests -maxdepth 1 -type f \( -name '*.test.ts' -o -name '*.test.tsx' \) ! -name 'iaf01-postgres-e2e.test.ts' ! -name 'ile01-managed-pooling.test.ts' -print) > artifacts/m11/ci-coverage.txt && node scripts/m11_enforce_coverage.mjs artifacts/m11/ci-coverage.txt
+        run: mkdir -p artifacts/m11 && node --import tsx --experimental-test-coverage --test $(find tests -maxdepth 1 -type f \( -name '*.test.ts' -o -name '*.test.tsx' \) ! -name 'iaf01-postgres-e2e.test.ts' ! -name 'ile01-managed-pooling.test.ts' -print) > artifacts/m11/ci-coverage.txt && node scripts/m11_enforce_coverage.mjs artifacts/m11/ci-coverage.txt
       - name: IAF PostgreSQL integration verification
         run: bash infra/iaf01/scripts/run-iaf01-postgres.sh
       - name: ILE PostgreSQL RLS and pooling verification
