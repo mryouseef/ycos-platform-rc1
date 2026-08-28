@@ -22,6 +22,12 @@ The repository excludes `.env`, `.env.*`, credentials, keys, provider state, and
 | `REAL_SECRET` | Negative-test marker only | Security fixture tests | `<never-set>` | Must never be set in any runtime, GitHub secret, or provider configuration. |
 | `NODE_ENV` | Runtime-provided | Node.js / Next.js | `development`, `test`, or `production` | Runtime mode; do not rely on it for business authorization. |
 | `PATH` | Operating-system-provided | Local harnesses | `<system-path>` | Operating-system execution path; not an application secret. |
+| `NEXT_PUBLIC_SUPABASE_URL` | Required only for P1-D2B Supabase SSR configuration | `src/p1/auth/supabase-server-client.ts` | `<https-provider-project-url>` | Public Auth project URL. Never a database connection URL. |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Required only for P1-D2B Supabase SSR configuration | `src/p1/auth/supabase-server-client.ts` | `<provider-publishable-key>` | Public Supabase Auth client configuration; never a service-role key. |
+| `SUPABASE_AUTH_ISSUER` | Required only for P1-D2B runtime validation | `src/p1/auth/supabase-auth-adapter.ts` | `<https-provider-project-url/auth/v1>` | Exact expected JWT issuer; server-only configuration. |
+| `SUPABASE_AUTH_AUDIENCE` | Required only for P1-D2B runtime validation | `src/p1/auth/supabase-auth-adapter.ts` | `<expected-end-user-audience>` | Exact expected JWT audience; server-only configuration. |
+| `SUPABASE_AUTH_JWKS_URL` | Optional explicit observability reference | Future P1-D2 validation/audit only | `<provider-jwks-url>` | Public discovery reference; no signing key is stored here. |
+| `AUTH_CALLBACK_BASE_URL` | Required only for P1-D2B callback/recovery redirects | `app/auth/**/route.ts` | `<https-approved-application-origin>` | Canonical approved application origin for local redirect construction; server-only configuration. |
 
 ## Secret-management rule
 

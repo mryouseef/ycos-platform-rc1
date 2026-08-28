@@ -35,7 +35,7 @@ export function PublicRoutePage({ locale, route }: { locale: Locale; route: Rout
     if (route.key === "contact") return <FormPage locale={locale} kind="contact" />;
     if (route.key === "consultation") return <FormPage locale={locale} kind="consultation" />;
     if (route.key === "privacy" || route.key === "terms") { const title = route.key === "privacy" ? copy.legal.privacyTitle : copy.legal.termsTitle; return <EditorialPage eyebrow={copy.ui.notice} title={title} lede={copy.legal.lede}><div className="legal-placeholder"><span>LEGAL REVIEW REQUIRED</span><p>{copy.legal.label}</p></div></EditorialPage>; }
-    if (route.key === "login") return <EditorialPage eyebrow={copy.login.eyebrow} title={copy.login.title} lede={copy.login.lede}><div className="portal-placeholder"><span aria-hidden="true">⌁</span><p>{locale === "ar" ? "هذه واجهة موضعية فقط. لا توجد حقول اعتماد أو مصادقة أو انتقال للبوابة." : "This is a placeholder interface only. There are no credential fields, authentication, or portal transition."}</p><Link className="button button--gold" href={localePath(locale)}>{copy.login.action}</Link></div></EditorialPage>;
+    if (route.key === "login") return <EditorialPage eyebrow={copy.login.eyebrow} title={copy.login.title} lede={copy.login.lede}><div className="portal-placeholder"><span aria-hidden="true">⌁</span><p>{locale === "ar" ? "هذه واجهة احتياطية لا تصل إليها الأولوية المسارية للتسجيل الديناميكي." : "This fallback interface is superseded by the dynamic login route."}</p><Link className="button button--gold" href={localePath(locale)}>{copy.login.action}</Link></div></EditorialPage>;
     return null;
   };
   return <PublicShell locale={locale} currentSuffix={route.suffix}>{render()}</PublicShell>;
