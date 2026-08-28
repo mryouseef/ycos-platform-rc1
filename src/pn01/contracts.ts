@@ -2,7 +2,7 @@
 export type DataClass = 'synthetic' | 'internal' | 'restricted';
 export type Capability = 'privateConnectivity'|'customerManagedKeys'|'pointInTimeRecovery'|'regionalBackupControl'|'transactionalWrites'|'conditionalWrites'|'workloadIdentity'|'immutableAuditExport'|'vectorSearch'|'streaming';
 export type CanonicalError = 'ValidationError'|'AuthenticationRequired'|'AccessDenied'|'ScopeViolation'|'NotFound'|'Conflict'|'ConcurrencyFailure'|'RateLimited'|'DependencyUnavailable'|'Timeout'|'UnsupportedCapability'|'DataClassificationViolation'|'PolicyViolation'|'IntegrityFailure'|'InternalFailure';
-export interface SecurityContext { requestId:string; actorId:string; actorType:'synthetic-user'|'synthetic-service'|'synthetic-admin'; tenantId:string; roles:string[]; permissions:string[]; purpose:string; dataScope:DataClass; correlationId:string; traceId:string; delegated?:boolean; }
+export interface SecurityContext { requestId:string; actorId:string; actorType:'synthetic-user'|'synthetic-service'|'synthetic-admin'; tenantId:string; roles:string[]; permissions:string[]; purpose:string; dataScope:DataClass; correlationId:string; traceId:string; delegated?:boolean; membershipId?:string; authorityVersion?:number; }
 export interface AuthorizationDecision { subject:string; action:string; resource:string; tenantId:string; decision:'allow'|'deny'; reasonCode:string; policyVersion:string; timestamp:string; correlationId:string; }
 export interface CapabilitySet { version:'1.0'; supported:ReadonlySet<Capability>; require(c:Capability):void; }
 export const capabilitySet=(items:Capability[]=[]):CapabilitySet=>({version:'1.0',supported:new Set(items),require(c){if(!this.supported.has(c)) throw new Error(`UnsupportedCapability:${c}`)}});

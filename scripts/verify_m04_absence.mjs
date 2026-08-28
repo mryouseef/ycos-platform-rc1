@@ -8,9 +8,13 @@ const provider = /(@azure\/|aws-sdk|@google-cloud|supabase|auth0|openai|anthropi
 const network = /(\bfetch\s*\(|axios|\.request\s*\(|node:http|node:https)/iu
 const canonical = 'infra/pn03/migrations/001_work_items.sql'
 const ileMigration = 'infra/ile01/migrations/001_ile_rls.sql'
+const p1IdentityMigration = 'infra/p1/migrations/001_identity_foundation.sql'
+const p1MembershipRlsMigration = 'infra/p1/migrations/002_membership_rls.sql'
 const approvedMigrations = new Map([
   [canonical, '4160f13484ad9a722de23718d489251f9fa70b9f77052a69c4c2899287d8f736'],
   [ileMigration, '983794328c27ec380369c49e3e9a1801567c1674da8de80420c116962f39b60e'],
+  [p1IdentityMigration, 'ba92c8b473faff65cc26da7af569efad0240a4b87a2f223b2bda9d8a5dca269a'],
+  [p1MembershipRlsMigration, '1b80b4473ffa69ef075aa2ab41249a815ca51d5e7b3af08480c789d083a08f28'],
 ])
 const read = file => fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : ''
 const digest = file => crypto.createHash('sha256').update(read(file)).digest('hex')
