@@ -37,10 +37,17 @@ export function loadSupabasePublicConfig(): SupabasePublicConfig {
 
 export function createSupabaseServerClient(cookieStore: RequestCookieStore) {
   const config = loadSupabasePublicConfig()
-  return createServerClient(config.url, config.publishableKey, {
-    cookies: {
-      getAll: () => [...cookieStore.getAll()],
-      setAll: (records) => records.forEach((record) => cookieStore.set(record.name, record.value, record.options as Record<string, unknown> | undefined)),
-    },
-  })
+  try {
+    return createServerClient(config.url, config.publishableKey, {
+      cookies: {
+        getAll: () => [...cookieStore.getAll()],
+        setAll: (records) => records.forEach((record) => cookieStore.set(record.name, record.value, record.options as Record<string, unknown> | undefined)),
+      },
+    })
+  } catch {
+    // P1-D2CDE Q02 diagnostic seam: normalize any SDK client-construction failure to a
+    // fixed, non-sensitive discriminant. The original error (which may carry provider
+    // internals) is intentionally discarded here and never propagated.
+    throw new Error('ClientInitFailure')
+  }
 }
