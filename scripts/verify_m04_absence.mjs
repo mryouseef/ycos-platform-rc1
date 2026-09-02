@@ -19,10 +19,10 @@ const p2ConsultingWorkflowMigration = 'infra/p2/migrations/001_consulting_workfl
 const p2EligibilityAuthorityMigration = 'infra/p2/migrations/002_membership_eligibility_authority.sql'
 const p2PrivilegedOwnershipTransferMigration = 'infra/p2/migrations/003_MANUAL_PRIVILEGED_ownership_transfer.sql'
 const approvedMigrations = new Map([
-  [canonical, '41273c18b36bb1615f8bf33c0dff24ea6fc2ced814a14d1f106636aab066181c'],
-  [ileMigration, '10f3a5739a5ee4aaf4d16b89d062a9a80abf856c309100f1aa9796ee19283a4b'],
-  [p1IdentityMigration, 'ecdf6f9f53498ca80c8f8fd68fc1b6d9c9c6311bef17c96f65e33c36c8396f0d'],
-  [p1MembershipRlsMigration, '2cf3bb26be10537b2ed979de0f8c90585a382e20782f966cb533c2f553c0169c'],
+  [canonical, '4160f13484ad9a722de23718d489251f9fa70b9f77052a69c4c2899287d8f736'],
+  [ileMigration, '983794328c27ec380369c49e3e9a1801567c1674da8de80420c116962f39b60e'],
+  [p1IdentityMigration, 'ba92c8b473faff65cc26da7af569efad0240a4b87a2f223b2bda9d8a5dca269a'],
+  [p1MembershipRlsMigration, '1b80b4473ffa69ef075aa2ab41249a815ca51d5e7b3af08480c789d083a08f28'],
   [p2ConsultingWorkflowMigration, 'c06338ecdc0da4d906dbada3c0365043970d215791051b395dfaaee38108e934'],
   [p2EligibilityAuthorityMigration, 'b213326e76fbe1bc380a9116ca087b287de80a38b2e5b76b0be2ba1ef990d121'],
   [p2PrivilegedOwnershipTransferMigration, 'ad857753aecd48b97e338f971792fd54b64aa8382fda1c1ff9fc0bd68825b291'],
