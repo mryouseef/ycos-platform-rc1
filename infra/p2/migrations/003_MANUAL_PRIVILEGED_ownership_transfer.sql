@@ -1,0 +1,41 @@
+-- ============================================================================
+-- MANUAL / PRIVILEGED STEP — DO NOT RUN VIA THE ORDINARY MIGRATION EXECUTOR.
+-- ============================================================================
+--
+-- PREREQUISITE (external to this repository):
+-- This statement MUST be executed via a PostgreSQL connection that holds
+-- genuine supabase_admin authority (or equivalent) over role
+-- ycos_p2_eligibility_owner — NOT the standard `postgres` connection
+-- string used to apply 001_consulting_workflow.sql and
+-- 002_membership_eligibility_authority.sql.
+--
+-- Live qualification evidence (R01C review) proved that, in Supabase's
+-- managed environment, membership grants recorded during ordinary
+-- postgres-executed migrations are attributed grantor = supabase_admin,
+-- and the postgres role cannot subsequently modify or revoke that
+-- membership itself. No SQL executed as postgres can legally reassign
+-- ownership of this function to ycos_p2_eligibility_owner. This is a
+-- Supabase role-management property, not a defect in this migration.
+--
+-- Concretely, run this ONE statement through whichever privileged path
+-- your Supabase project exposes for supabase_admin-level operations
+-- (Supabase support channel, an elevated internal console, or any
+-- Supabase-documented mechanism for supabase_admin-authority SQL) —
+-- this repository/migration runner cannot identify that path for you,
+-- since it is a property of your specific Supabase project's
+-- administrative access, not of the source code.
+--
+-- Until this statement is run, migration 002's function remains owned
+-- by postgres and FAILS CLOSED (always returns false — see 002's
+-- header comment) rather than granting any eligibility incorrectly.
+-- No security regression exists in that interim state; the P2
+-- consultant-assignment feature is simply inert until this step runs.
+-- ============================================================================
+
+ALTER FUNCTION public.p2_is_consultant_membership_eligible(text) OWNER TO ycos_p2_eligibility_owner;
+
+-- After this succeeds, verify (via the same privileged connection, or an
+-- ordinary connection — both can SELECT this):
+--   SELECT pg_get_userbyid(proowner) FROM pg_proc
+--   WHERE proname = 'p2_is_consultant_membership_eligible';
+-- Expected result: ycos_p2_eligibility_owner
