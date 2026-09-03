@@ -168,3 +168,77 @@ export const activateConsultation = (repo: P2PostgresRepository, context: Securi
 export const pauseConsultation = (repo: P2PostgresRepository, context: SecurityContext, id: string, expectedVersion: number) => transitionConsultationGuarded(repo, context, id, expectedVersion, 'PAUSED')
 export const completeConsultation = (repo: P2PostgresRepository, context: SecurityContext, id: string, expectedVersion: number) => transitionConsultationGuarded(repo, context, id, expectedVersion, 'COMPLETED')
 export const closeConsultation = (repo: P2PostgresRepository, context: SecurityContext, id: string, expectedVersion: number) => transitionConsultationGuarded(repo, context, id, expectedVersion, 'CLOSED')
+
+/**
+ * P3-B client-facing lifecycle timeline.
+ *
+ * Fixed server-controlled label map. `${action}:${requestedState}` combinations not present
+ * here are OMITTED entirely from the projection — fail-closed by omission, never by exposing
+ * the raw action/state value. DENY, CONFLICT, ASSIGN, and REPLAY rows never reach this map
+ * because they are excluded upstream (SQL WHERE clause + repository-layer REPLAY filter);
+ * this map additionally can never accidentally leak one of those because it has no entries
+ * for them at all.
+ */
+const CLIENT_TIMELINE_LABELS: Record<'ar' | 'en', Record<string, string>> = {
+  ar: {
+    'CREATE:DRAFT': 'تم إنشاء الطلب',
+    'TRANSITION:SUBMITTED': 'تم إرسال الطلب للمراجعة',
+    'TRANSITION:REVIEW': 'الطلب قيد المراجعة',
+    'TRANSITION:ACCEPTED': 'تم قبول الطلب',
+    'TRANSITION:DECLINED': 'تم رفض الطلب',
+    'TRANSITION:WITHDRAWN': 'تم سحب الطلب',
+    'TRANSITION:CLOSED': 'تم الإغلاق',
+    'ESTABLISH:PROPOSED': 'بدأت الاستشارة',
+    'TRANSITION:ACTIVE': 'الاستشارة جارية',
+    'TRANSITION:PAUSED': 'تم إيقاف الاستشارة مؤقتًا',
+    'TRANSITION:COMPLETED': 'اكتملت الاستشارة',
+  },
+  en: {
+    'CREATE:DRAFT': 'Request created',
+    'TRANSITION:SUBMITTED': 'Request submitted for review',
+    'TRANSITION:REVIEW': 'Request under review',
+    'TRANSITION:ACCEPTED': 'Request accepted',
+    'TRANSITION:DECLINED': 'Request declined',
+    'TRANSITION:WITHDRAWN': 'Request withdrawn',
+    'TRANSITION:CLOSED': 'Closed',
+    'ESTABLISH:PROPOSED': 'Consultation started',
+    'TRANSITION:ACTIVE': 'Consultation active',
+    'TRANSITION:PAUSED': 'Consultation paused',
+    'TRANSITION:COMPLETED': 'Consultation completed',
+  },
+}
+
+export type ClientTimelineEntry = Readonly<{ label: string; occurredAt: string }>
+
+/** Pure — exported so it can be unit-tested directly without a repository/DB. Returns null
+ * (never the raw action/state) for any combination not in the fixed map above. */
+export function projectClientTimelineEntry(locale: 'ar' | 'en', action: string, requestedState: string | null): ClientTimelineEntry['label'] | null {
+  if (!requestedState) return null
+  return CLIENT_TIMELINE_LABELS[locale][`${action}:${requestedState}`] ?? null
+}
+
+/**
+ * SecurityContext → request-ownership authorization (existing canReadRequest, unchanged) →
+ * server-derived consultation lookup + authorization (existing
+ * canReadConsultationAsRequestOwner, unchanged) → filtered event read → fixed-map projection.
+ * Never accepts tenantId/consultationId/actorId/membershipId/audit identifiers from the caller.
+ * Fails closed to an empty timeline for any request the caller cannot prove ownership of —
+ * NOT_FOUND_OR_NOT_AUTHORIZED is indistinguishable from a genuinely nonexistent request.
+ */
+export async function readClientTimeline(repo: P2PostgresRepository, context: SecurityContext, requestId: string, locale: 'ar' | 'en'): Promise<Outcome<ClientTimelineEntry[]>> {
+  const actorId = requireActor(context)
+  const tenantId = authoritativeTenantId(context)
+  const request = await repo.getRequest(tenantId, actorId, requestId).catch((error) => { if (error instanceof Error && error.message === 'NotFound') return undefined; throw error })
+  if (!request || !canReadRequest(context, request)) return { ok: false, error: 'NOT_FOUND_OR_NOT_AUTHORIZED' }
+
+  const consultation = await repo.getConsultationByRequestId(tenantId, actorId, requestId).catch((error) => { if (error instanceof Error && error.message === 'NotFound') return undefined; throw error })
+  const authorizedConsultationId = consultation && canReadConsultationAsRequestOwner(context, request, consultation) ? consultation.id : null
+
+  const rows = await repo.getClientSafeAuditEvents(tenantId, actorId, requestId, authorizedConsultationId)
+  const entries: ClientTimelineEntry[] = []
+  for (const row of rows) {
+    const label = projectClientTimelineEntry(locale, row.action, row.requestedState)
+    if (label) entries.push({ label, occurredAt: row.occurredAt })
+  }
+  return { ok: true, value: entries }
+}

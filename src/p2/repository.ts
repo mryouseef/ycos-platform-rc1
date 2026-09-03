@@ -170,6 +170,34 @@ export class P2PostgresRepository {
   /** P3-A: minimum additional read needed for the client request-owner status view.
    * Tenant-scoped via the WHERE clause AND the enclosing transaction's RLS context — a
    * cross-tenant request_id simply matches zero rows (NotFound), never leaking existence. */
+  /** P3-B: minimum read primitive for the client-facing lifecycle timeline. Preserves the R01
+   * pairing between resource_type and resource_id explicitly in the WHERE clause (never relies
+   * on identifier non-collision). R02: REPLAY exclusion is now fully in SQL via
+   * `reason_code IS DISTINCT FROM 'REPLAY'` — reason_code is no longer selected at all, so
+   * there is nothing to filter or discard in TypeScript. The `id` column is used solely for
+   * the ORDER BY tie-breaker (occurred_at is not guaranteed unique) and is never selected. */
+  async getClientSafeAuditEvents(tenantId: string, actorId: string, requestId: string, consultationId: string | null): Promise<Array<{ action: string; requestedState: string | null; occurredAt: string }>> {
+    return this.transaction(tenantId, actorId, async (client) => {
+      const result = consultationId
+        ? await client.query(
+            `SELECT action, requested_state, occurred_at FROM p2_audit_events
+             WHERE tenant_id = $1
+               AND ((resource_type = 'request' AND resource_id = $2) OR (resource_type = 'consultation' AND resource_id = $3))
+               AND outcome = 'ALLOW' AND action != 'ASSIGN' AND reason_code IS DISTINCT FROM 'REPLAY'
+             ORDER BY occurred_at ASC, id ASC`,
+            [tenantId, requestId, consultationId],
+          )
+        : await client.query(
+            `SELECT action, requested_state, occurred_at FROM p2_audit_events
+             WHERE tenant_id = $1 AND resource_type = 'request' AND resource_id = $2
+               AND outcome = 'ALLOW' AND action != 'ASSIGN' AND reason_code IS DISTINCT FROM 'REPLAY'
+             ORDER BY occurred_at ASC, id ASC`,
+            [tenantId, requestId],
+          )
+      return result.rows.map((row: any) => ({ action: row.action as string, requestedState: (row.requested_state as string | null) ?? null, occurredAt: new Date(row.occurred_at).toISOString() }))
+    })
+  }
+
   async getConsultationByRequestId(tenantId: string, actorId: string, requestId: string): Promise<Consultation> {
     return this.transaction(tenantId, actorId, async (client) => {
       const result = await client.query('SELECT id, tenant_id, request_id, manager_membership_id, consultant_membership_id, state, version FROM consultations WHERE tenant_id = $1 AND request_id = $2', [tenantId, requestId])

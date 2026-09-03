@@ -3,7 +3,7 @@ import { createSupabaseServerClient, loadSupabasePublicConfig } from '../p1/auth
 import { deriveProviderBackedSecurityContext } from '../p1/authorization/provider-backed-context'
 import { createProviderBackedRepository } from '../p1/authorization/provider-backed-runtime'
 import { createP2Repository } from './runtime'
-import { listMyRequests, readRequest, readConsultationForRequest } from './service'
+import { listMyRequests, readRequest, readConsultationForRequest, readClientTimeline } from './service'
 import { RequestsPanel } from './requests-panel'
 
 const consultationStateLabels: Record<'ar' | 'en', Record<string, string>> = {
@@ -24,6 +24,32 @@ async function ConsultationStatusNote({ repository, context, requestId, locale }
       {locale === 'ar' ? 'حالة الاستشارة: ' : 'Consultation status: '}
       <strong>{label}</strong>
     </p>
+  )
+}
+
+/** P3-B: renders ONLY the fixed-label client-safe timeline projection — never a raw action,
+ * outcome, reason_code, or any identifier. Empty state is safe/expected (a new request with
+ * no client-meaningful lifecycle events yet). Reuses readClientTimeline's existing P3-A
+ * authorization chain — no separate visibility gate here that could diverge from it. */
+async function ClientTimeline({ repository, context, requestId, locale }: { repository: import('./repository').P2PostgresRepository; context: import('../pn01/contracts').SecurityContext; requestId: string; locale: 'ar' | 'en' }) {
+  const result = await readClientTimeline(repository, context, requestId, locale)
+  if (!result.ok) return null
+  return (
+    <section className="request-timeline">
+      <h2>{locale === 'ar' ? 'سجل الحالة' : 'Status timeline'}</h2>
+      {result.value.length === 0 ? (
+        <p>{locale === 'ar' ? 'لا توجد أحداث بعد.' : 'No events yet.'}</p>
+      ) : (
+        <ol>
+          {result.value.map((entry, index) => (
+            <li key={index}>
+              <span>{entry.label}</span>
+              <time dateTime={entry.occurredAt}>{entry.occurredAt}</time>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
   )
 }
 
@@ -76,6 +102,7 @@ export async function P2RequestsPage({ locale, id }: { locale: string; id?: stri
             <h1>{result.value.title}</h1>
             <p>{result.value.summary}</p>
             <ConsultationStatusNote repository={repository} context={context} requestId={id} locale={rtl ? 'ar' : 'en'} />
+            <ClientTimeline repository={repository} context={context} requestId={id} locale={rtl ? 'ar' : 'en'} />
             <RequestsPanel locale={rtl ? 'ar' : 'en'} rows={[result.value]} isClient={isClient} isManager={isManager} />
           </div>
         </main>
