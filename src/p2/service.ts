@@ -242,3 +242,54 @@ export async function readClientTimeline(repo: P2PostgresRepository, context: Se
   }
   return { ok: true, value: entries }
 }
+
+/**
+ * P3-C manager-facing operational summary.
+ *
+ * Authority: SecurityContext → ROLE-05 check (fails BEFORE any repository call, matching the
+ * existing listMyRequests convention) → context.tenantId (never client-supplied) →
+ * tenant-scoped repository reads (100% reused: listRequests's existing no-filter branch +
+ * ONE new minimum-projection consultation-summary read) → server-side merge → the fixed
+ * ManagerConsultationSummary shape only. No raw consultation/request row crosses into the
+ * returned value. No authorization.ts change was required or made.
+ */
+export type ManagerConsultationSummary = Readonly<{
+  requestId: string
+  requestTitle: string
+  requestState: RequestState
+  consultationState: ConsultationState | null
+  consultationVersion: number | null
+}>
+
+export async function listManagerConsultationSummary(repo: P2PostgresRepository, context: SecurityContext): Promise<Outcome<ManagerConsultationSummary[]>> {
+  const actorId = requireActor(context)
+  if (!context.roles.includes('ROLE-05')) return { ok: false, error: 'ACTION_NOT_AUTHORIZED' }
+  const tenantId = authoritativeTenantId(context)
+
+  const requests = await repo.listRequests(tenantId, actorId)
+  const consultationSummaries = await repo.listConsultationSummariesForTenant(tenantId, actorId)
+
+  // Fail closed rather than silently picking an arbitrary row: the schema's
+  // UNIQUE(tenant_id, request_id) constraint on consultations should make this structurally
+  // impossible, but this defends the projection itself against ever presenting ambiguous data
+  // if that invariant were ever violated.
+  const byRequestId = new Map<string, { state: string; version: number }>()
+  for (const row of consultationSummaries) {
+    if (byRequestId.has(row.requestId)) throw new Error('IntegrityFailure')
+    byRequestId.set(row.requestId, { state: row.state, version: row.version })
+  }
+
+  return {
+    ok: true,
+    value: requests.map((request) => {
+      const consultation = byRequestId.get(request.id)
+      return {
+        requestId: request.id,
+        requestTitle: request.title,
+        requestState: request.state,
+        consultationState: (consultation?.state as ConsultationState | undefined) ?? null,
+        consultationVersion: consultation?.version ?? null,
+      }
+    }),
+  }
+}

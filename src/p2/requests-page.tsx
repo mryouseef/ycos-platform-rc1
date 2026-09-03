@@ -3,12 +3,57 @@ import { createSupabaseServerClient, loadSupabasePublicConfig } from '../p1/auth
 import { deriveProviderBackedSecurityContext } from '../p1/authorization/provider-backed-context'
 import { createProviderBackedRepository } from '../p1/authorization/provider-backed-runtime'
 import { createP2Repository } from './runtime'
-import { listMyRequests, readRequest, readConsultationForRequest, readClientTimeline } from './service'
+import { listMyRequests, readRequest, readConsultationForRequest, readClientTimeline, listManagerConsultationSummary } from './service'
 import { RequestsPanel } from './requests-panel'
 
 const consultationStateLabels: Record<'ar' | 'en', Record<string, string>> = {
   ar: { PROPOSED: 'قيد التأسيس', ACTIVE: 'جارية', PAUSED: 'مُتوقّفة مؤقتًا', COMPLETED: 'مُكتملة', CLOSED: 'مُغلَقة' },
   en: { PROPOSED: 'Proposed', ACTIVE: 'Active', PAUSED: 'Paused', COMPLETED: 'Completed', CLOSED: 'Closed' },
+}
+
+// P3-C: request-state labels, following the exact same fixed-map pattern as
+// consultationStateLabels above (no equivalent map existed to reuse for request states).
+const requestStateLabels: Record<'ar' | 'en', Record<string, string>> = {
+  ar: { DRAFT: 'مسودة', SUBMITTED: 'مُرسَل', REVIEW: 'قيد المراجعة', ACCEPTED: 'مقبول', DECLINED: 'مرفوض', WITHDRAWN: 'مسحوب', CLOSED: 'مُغلَق' },
+  en: { DRAFT: 'Draft', SUBMITTED: 'Submitted', REVIEW: 'In review', ACCEPTED: 'Accepted', DECLINED: 'Declined', WITHDRAWN: 'Withdrawn', CLOSED: 'Closed' },
+}
+
+const NOT_STARTED_LABEL: Record<'ar' | 'en', string> = { ar: 'لم تبدأ الاستشارة بعد', en: 'Consultation not started' }
+const UNSUPPORTED_LABEL: Record<'ar' | 'en', string> = { ar: 'حالة غير معروفة', en: 'Unrecognized state' }
+
+/** P3-C: manager-only tenant-wide operational summary. Renders NOTHING beyond the approved
+ * ManagerConsultationSummary shape — no id, tenantId, or any membership identifier ever
+ * reaches this component's props or output. requestId exists only as a React list key, never
+ * rendered as visible text. Unmapped state values fail closed to a fixed generic label,
+ * never a raw state string. */
+async function ManagerSummary({ repository, context, locale }: { repository: import('./repository').P2PostgresRepository; context: import('../pn01/contracts').SecurityContext; locale: 'ar' | 'en' }) {
+  const result = await listManagerConsultationSummary(repository, context)
+  if (!result.ok) return null
+  return (
+    <section className="manager-summary">
+      <h2>{locale === 'ar' ? 'ملخّص تشغيلي' : 'Operational summary'}</h2>
+      {result.value.length === 0 ? (
+        <p>{locale === 'ar' ? 'لا توجد طلبات في مستأجرك بعد.' : 'No requests in your tenant yet.'}</p>
+      ) : (
+        <table>
+          <tbody>
+            {result.value.map((row) => (
+              <tr key={row.requestId}>
+                <td>{row.requestTitle}</td>
+                <td>{requestStateLabels[locale][row.requestState] ?? UNSUPPORTED_LABEL[locale]}</td>
+                <td>
+                  {row.consultationState === null
+                    ? NOT_STARTED_LABEL[locale]
+                    : (consultationStateLabels[locale][row.consultationState] ?? UNSUPPORTED_LABEL[locale])}
+                </td>
+                <td>{row.consultationVersion ?? ''}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </section>
+  )
 }
 
 /** P3-A: shows ONLY the authoritative consultation state, nothing else — no internal
@@ -118,6 +163,7 @@ export async function P2RequestsPage({ locale, id }: { locale: string; id?: stri
             <h1>{rtl ? 'طلبات الاستشارة' : 'Consulting requests'}</h1>
             <p>{rtl ? 'سير عمل حقيقي — بيانات اصطناعية فقط، محكوم بسلطة P1 الحقيقية.' : 'Real workflow — synthetic data only, governed by real P1 authority.'}</p>
           </div>
+          {isManager && <div className="shell"><ManagerSummary repository={repository} context={context} locale={rtl ? 'ar' : 'en'} /></div>}
           <div className="shell">
             <RequestsPanel locale={rtl ? 'ar' : 'en'} rows={rows} isClient={isClient} isManager={isManager} />
           </div>

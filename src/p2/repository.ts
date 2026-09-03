@@ -198,6 +198,20 @@ export class P2PostgresRepository {
     })
   }
 
+  /** P3-C: manager-facing summary read. tenant_id is a WHERE security predicate ONLY — never
+   * selected. No consultation id, manager_membership_id, or consultant_membership_id is
+   * selected; the minimum-disclosure boundary is enforced here at the SQL projection itself,
+   * not merely by the service layer discarding fields later. */
+  async listConsultationSummariesForTenant(tenantId: string, actorId: string): Promise<Array<{ requestId: string; state: string; version: number }>> {
+    return this.transaction(tenantId, actorId, async (client) => {
+      const result = await client.query(
+        `SELECT request_id, state, version FROM consultations WHERE tenant_id = $1 ORDER BY created_at DESC`,
+        [tenantId],
+      )
+      return result.rows.map((row: any) => ({ requestId: row.request_id as string, state: row.state as string, version: Number(row.version) }))
+    })
+  }
+
   async getConsultationByRequestId(tenantId: string, actorId: string, requestId: string): Promise<Consultation> {
     return this.transaction(tenantId, actorId, async (client) => {
       const result = await client.query('SELECT id, tenant_id, request_id, manager_membership_id, consultant_membership_id, state, version FROM consultations WHERE tenant_id = $1 AND request_id = $2', [tenantId, requestId])
